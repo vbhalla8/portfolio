@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Github, Linkedin, Mail, Code, FileText, Menu, X, ExternalLink, ChevronDown } from 'lucide-react';
 
 const VerticalScrollingText = () => (
-  <div className="absolute right-0 top-0 bottom-0 w-12 bg-[#8169B1] overflow-hidden md:w-13">
+  <div className="absolute right-0 top-0 bottom-0 w:[100rem] bg-[#8169B1] overflow-hidden md:w-12  ">
     <style jsx>{`
       @keyframes scroll {
         0% { transform: translateY(0%); }
@@ -14,6 +14,9 @@ const VerticalScrollingText = () => (
         white-space: nowrap;
       }
     `}</style>
+
+
+
     
     <div className="flex flex-col h-full">
       <div className="scrolling-text font-didact text-black text-sm md:text-lg tracking-wider p-2 md:p-3">
@@ -25,6 +28,7 @@ const VerticalScrollingText = () => (
     </div>
   </div>
 );
+
 
 
 
@@ -100,7 +104,7 @@ const HomeNavigation = ({ setActivePage }) => {
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
       {/* Mobile Menu Button */}
-      <div className="md:hidden absolute top-4 right-4 z-50">
+      <div className="md:hidden absolute top-[.5em] left-[25em] z-50">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 bg-[#8169B1] text-white rounded-md"
@@ -325,37 +329,51 @@ const SideNavigation = ({ activePage, setActivePage }) => {
 
  /*start of work/epx ↓ */
 
-const ProjectCard = ({ project, borderStyle }) => (
-  <div className={`border-2 ${borderStyle} w-full relative group`}>
-    {/* Responsive image container */}
-    <div className=" w-full relative">
-      <img
-        src={project.image}
-        alt={project.title}
-        className="w-full h-full object-cover"
-      />
-      {/* Overlay with responsive text */}
-      <div className="absolute inset-0 bg-black bg-opacity-70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center text-white p-4">
-        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 font-didact">
-          {project.title}
-        </h3>
-        <p className="text-xs sm:text-sm md:text-base text-center mb-3 font-didact">
-          {project.description}
-        </p>
-        <div className="flex gap-3">
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-1.5 bg-white text-black rounded-full hover:bg-gray-200 transition-colors duration-300"
-          >
-            <ExternalLink size={20} />
-          </a>
+const ProjectCard = ({ project, borderStyle, delay }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  return (
+    <div className={`border-2 ${borderStyle} w-full relative group transition-all duration-700 ease-out transform 
+      ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="w-full relative">
+        <img
+          src={project.image}
+          alt={project.title}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center text-white p-2">
+          <h3 className="text-xl lg:text-xl md:text-lg sm:text-base font-bold mb-1 sm:mb-2 font-didact text-center">
+            {project.title}
+          </h3>
+          
+          <p className="text-[16px] sm:text-xs md:text-sm lg:text-base text-center mb-2 font-didact overflow-hidden">
+            {project.description}
+          </p>
+          
+          <div className="flex gap-2">
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1 sm:p-1.5 bg-white text-black rounded-full hover:bg-gray-200 transition-colors duration-300"
+            >
+              <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
 
 const BackgroundTile = ({ isActive }) => (
   <div 
@@ -392,31 +410,31 @@ const WorkPage = () => {
 
   return (
     <div className="bg-[#1B1B1B] min-h-screen relative w-full">
-      {/* Fixed header */}
       <div className="border-b-2 border-[#8169B1] bg-[#1B1B1B] sticky top-0 z-20">
-        <h2 className="text-xl font-bold p-2 text:didact  text-white">Work/EXP</h2>
+        <h2 className="text-xl font-bold p-2 font-didact text-white">Work/EXP</h2>
       </div>
-      
+
       <div className="relative pb-20 bg-[#1B1B1B]">
-        {/* Background Grid */}
-        <div className="fixed inset-0 grid grid-cols-4 gap-4 p-4">
+        <div className="fixed inset-0 grid grid-cols-4 gap-4 p-4, gap-1 xs:gap-1.5 sm:gap-2 md:gap-3
+
+">
           {[...Array(totalTiles)].map((_, index) => (
-            <BackgroundTile 
-              key={index} 
-              isActive={activeIndices.has(index)} 
+            <BackgroundTile
+              key={index}
+              isActive={activeIndices.has(index)}
             />
           ))}
         </div>
-        
-        {/* Projects Grid */}
+
         <div className="relative max-w-4xl mx-auto px-4 py-8">
-          <div className="bg-[#1B1B1B] p-8 rounded-lg shadow-2xl relative z-10">
-            <div className="grid grid-cols-2 gap-8">
-              {projects.map((project) => (
+          <div className="bg-[#1B1B1B] p-4 sm:p-6 md:p-8 rounded-lg shadow-2xl relative z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+              {projects.map((project, index) => (
                 <div key={project.id} className="relative">
-                  <ProjectCard 
-                    project={project} 
-                    borderStyle={project.borderColor} 
+                  <ProjectCard
+                    project={project}
+                    borderStyle={project.borderColor}
+                    delay={200 * index} // Stagger the animations
                   />
                 </div>
               ))}
@@ -424,8 +442,7 @@ const WorkPage = () => {
           </div>
         </div>
       </div>
-      
-      {/* Extra padding at bottom to ensure full coverage */}
+
       <div className="bg-[#1B1B1B] w-full h-20"></div>
     </div>
   );
@@ -468,19 +485,21 @@ const ImageSlideshow = () => {
     {
       id: "slide1",
       source: "images/PLaYgrouND copy 2.png",
-      className: "md:top-[13rem] md:left-[40rem] top-[1rem] left-[1rem] w-[18rem] md:w-[45rem] h-[25rem] md:h-[40rem]"
+      className: "md:top-[13rem] md:left-[40rem] top-[-12rem] left-[-1rem] w-[13rem] md:w-[45rem] h-[40rem] md:h-[41rem]"
     },
     {
       id: "slide2",
       source: "images/Playground copy.png",
-      className: "md:top-[13rem] md:left-[40rem] top-[1rem] left-[1rem] w-[18rem] md:w-[45rem] h-[25rem] md:h-[40rem]"
+      className: "md:top-[13rem] md:left-[40rem] top-[-12rem] left-[-1rem] w-[20rem] md:w-[45rem] h-[40rem] md:h-[41rem]"
     },
     {
       id: "slide3",
       source: "images/pLAYGROUND.png",
-      className: "md:top-[13rem] md:left-[40rem] top-[1rem] left-[1rem] w-[18rem] md:w-[45rem] h-[25rem] md:h-[40rem]"
+      className: "md:top-[13rem] md:left-[40rem] top-[-12rem] left-[-1rem] w-[20rem] md:w-[45rem] h-[40rem] md:h-[41rem]"
     }
   ];
+
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -599,7 +618,13 @@ const FreeStyleGallery = () => {
       source: "images/swirl3.png",
       isSwirl: true,
       animationDelay: "1.5s"
+    },
+
+    {
+      id: 10, 
+      
     }
+
   ];
 
   return (
