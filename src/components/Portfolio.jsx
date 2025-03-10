@@ -30,9 +30,6 @@ const VerticalScrollingText = () => (
 );
 
 
-
-
-
 const projects = [
   {
     id: 1,
@@ -554,9 +551,56 @@ const WorkPage = () => {
 
  /*start of playground ↓ */
 
+// Interactive dot background that will be applied via CSS instead of a component
+const dotBackgroundStyle = `
+  .dot-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(#555 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 1;
+  }
 
+  .container-with-dots {
+    position: relative;
+    background-color: #1B1B1B;
+  }
 
- 
+  .container-with-dots::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(#555 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes moveDots {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 40px 40px;
+    }
+  }
+
+  .mouse-move-effect {
+    transition: background-position 0.1s;
+  }
+`;
 
 const ScrollArrow = () => {
   const scrollToNext = () => {
@@ -607,8 +651,6 @@ const ImageSlideshow = () => {
     }
   ];
 
-
-
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
@@ -641,7 +683,6 @@ const ImageSlideshow = () => {
   );
 };
 
-
 const ImageSlideshow2 = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -667,8 +708,6 @@ const ImageSlideshow2 = () => {
       className: "md:top-[-142rem] md:left-[40rem] top-[-110rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
     }
   ];
-
-
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -702,8 +741,6 @@ const ImageSlideshow2 = () => {
   );
 };
 
-
-
 const ImageSlideshow3 = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -729,8 +766,6 @@ const ImageSlideshow3 = () => {
       className: "md:top-[-28rem] md:left-[13rem] top-[25rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
     }
   ];
-
-
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -763,7 +798,6 @@ const ImageSlideshow3 = () => {
     </div>
   );
 };
-
 
 const FreeStyleGallery = () => {
   const [visibleItems, setVisibleItems] = useState({});
@@ -850,18 +884,11 @@ const FreeStyleGallery = () => {
       source: "images/swirl3.png",
       isSwirl: true,
       animationDelay: "1.5s"
-    },
-
-    {
-      id: 10, 
-      
     }
-
   ];
 
   return (
-    <div className="relative w-full min-h-screen md:h-screen overflow-hidden">
-      <div className="absolute inset-0 bg-[#1B1B1B]" />
+    <div className="relative w-full min-h-screen md:h-screen overflow-hidden content-layer">
       {artPieces.map((piece) => (
         <div
           key={piece.id}
@@ -888,7 +915,6 @@ const FreeStyleGallery = () => {
         }
       `}</style>
       <ImageSlideshow />
-
     </div>
   );
 };
@@ -978,9 +1004,7 @@ const GridGallery = ({ forceAnimate }) => {
       width: "w-[13rem] lg:w-[39rem]",
       height: "h-[12rem] lg:h-[36rem]",
       position: "lg:top-[72rem] lg:left-[41rem] top-[104rem] left-[8rem]"
-    }
-    ,
-
+    },
     {
       id: 8,
       title: "fullhow",
@@ -1005,7 +1029,6 @@ const GridGallery = ({ forceAnimate }) => {
       height: "h-[14rem] lg:h-[19rem]",
       position: "lg:top-[140rem] lg:left-[16rem] top-[165rem] left-[4.4rem]"
     }, 
-
     {
       id: 11,
       title: "fullhow",
@@ -1030,7 +1053,6 @@ const GridGallery = ({ forceAnimate }) => {
       height: "h-[14rem] lg:h-[27rem]",
       position: "lg:top-[183rem] lg:left-[50rem] top-[217rem] left-[7rem]"
     }, 
-
     {
       id: 14,
       title: "fullhow",
@@ -1046,8 +1068,7 @@ const GridGallery = ({ forceAnimate }) => {
       width: "w-[20rem] lg:w-[27rem]",
       height: "h-[14rem] lg:h-[19rem]",
       position: "lg:top-[211.4rem] lg:left-[51rem] top-[253rem] left-[5rem]"
-    }, 
-
+    }
   ];
 
   // Calculate the maximum height needed based on the positions and heights of images
@@ -1063,7 +1084,7 @@ const GridGallery = ({ forceAnimate }) => {
   return (
     <div 
       id="SecondGallery" 
-      className="w-full relative overflow-x-hidden bg-[#1B1B1B]"
+      className="w-full relative overflow-x-hidden content-layer"
       style={{ height: `${maxHeight + 20}rem` }} // Add some padding
     >
       <div className="relative w-full h-full">
@@ -1086,37 +1107,94 @@ const GridGallery = ({ forceAnimate }) => {
       </div>
       <ImageSlideshow2 />
       <ImageSlideshow3 />
+    </div>
+  );
+};
 
+// Mouse Move Handler Component
+const MouseMoveHandler = ({ children }) => {
+  const containerRef = useRef(null);
+  
+  useEffect(() => {
+    const container = containerRef.current;
+    
+    const handleMouseMove = (e) => {
+      if (!container) return;
+      
+      const { left, top, width, height } = container.getBoundingClientRect();
+      const x = e.clientX - left;
+      const y = e.clientY - top;
+      
+      // Calculate position relative to container (0-100%)
+      const offsetX = (x / width) * 10;
+      const offsetY = (y / height) * 10;
+      
+      // Apply the background position offset
+      container.style.backgroundPosition = `${offsetX}px ${offsetY}px`;
+    };
+    
+    if (container) {
+      container.addEventListener('mousemove', handleMouseMove);
+    }
+    
+    return () => {
+      if (container) {
+        container.removeEventListener('mousemove', handleMouseMove);
+      }
+    };
+  }, []);
+  
+  return (
+    <div ref={containerRef} className="mouse-move-effect">
+      {children}
     </div>
   );
 };
 
 const PlaygroundPage = () => {
   const [shouldAnimateGrid, setShouldAnimateGrid] = useState(false);
+  
+  useEffect(() => {
+    // Apply smooth scrolling behavior to the document
+    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Add mouse-reactive dot background style
+    const style = document.createElement('style');
+    style.textContent = dotBackgroundStyle;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+      document.documentElement.style.scrollBehavior = '';
+    };
+  }, []);
 
   const handleScrollClick = () => {
     setShouldAnimateGrid(true);
   };
 
-
   return (
-    <div className="h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory bg-[#1B1B1B]">
+    <div className="h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory smooth-scroll">
       <div className="snap-start">
-        <div className="min-h-screen p-4 md:p-8 pt-16 relative">
-          <div className="mx-auto">
-            <FreeStyleGallery />
-            <ScrollArrow onScrollClick={handleScrollClick} />
+        <MouseMoveHandler>
+          <div className="min-h-screen p-4 md:p-8 pt-16 relative container-with-dots">
+            <div className="mx-auto">
+              <FreeStyleGallery />
+              <ScrollArrow onScrollClick={handleScrollClick} />
+            </div>
           </div>
-        </div>
+        </MouseMoveHandler>
       </div>
       <div className="snap-start">
-        <GridGallery forceAnimate={shouldAnimateGrid} />
+        <MouseMoveHandler>
+          <div className="container-with-dots">
+            <GridGallery forceAnimate={shouldAnimateGrid} />
+          </div>
+        </MouseMoveHandler>
       </div>
     </div>
   );
 };
-
-
 
 
 
