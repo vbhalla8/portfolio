@@ -89,6 +89,37 @@ const projects = [
 ];
 
 
+const workExperiences = [
+  {
+    title: "Teaching Assistant",
+    company: "Georgia Insitute of Technology",
+    period: "Jan 2025 - Present",
+    responsibilities: [
+      "Addressed students’ lecture and homework questions, providing clarification and support",
+      "Guided students in developing full-stack web applications using Django, emphasizing best practices in front-end and back-end integration",
+      "Mentored students on debugging and optimizing their projects, focusing on scalability and performance",
+    ]
+  },
+  {
+    title: "UI/UX Design Intern",
+    company: "Indago",
+    period: "Summer 2024",
+    responsibilities: [
+      "Created wireframes and prototypes using Figma for client projects",
+      "Conducted user research and usability testing to improve user experience",
+      "Collaborated with development team to ensure design feasibility"
+    ]
+  },
+  {
+    title: "CS Tutor",
+    company: "Georgia State University",
+    period: "Jan 2023 - Apr 2023",
+    responsibilities: [
+      "Worked with over 50 Programming students, explaining challenging concepts into simpler, more digestible explanations",
+      "Helped build a solid foundation for them to excel with their course work"
+    ]
+  }
+];
 
 
 
@@ -104,7 +135,7 @@ const HomeNavigation = ({ setActivePage }) => {
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
       {/* Mobile Menu Button */}
-      <div className="md:hidden absolute top-[.5em] left-[25em] z-50">
+      <div className="md:hidden absolute top-[1em] left-[29em] z-50">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 bg-[#8169B1] text-white rounded-md"
@@ -141,6 +172,8 @@ const HomeNavigation = ({ setActivePage }) => {
     </div>
   );
 };
+
+
 
 // HomePage Component - Changed to prevent scrolling by using fixed height
 const HomePage = () => (
@@ -329,20 +362,20 @@ const SideNavigation = ({ activePage, setActivePage }) => {
 
  /*start of work/epx ↓ */
 
-const ProjectCard = ({ project, borderStyle, delay }) => {
+ const ProjectCard = ({ project, borderStyle, delay }) => {
   const [isVisible, setIsVisible] = useState(false);
-
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, delay);
-
+    
     return () => clearTimeout(timer);
   }, [delay]);
-
+  
   return (
-    <div className={`border-2 ${borderStyle} w-full relative group transition-all duration-700 ease-out transform 
-      ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+    <div className={`border-2 ${borderStyle} w-full relative group transition-all duration-700 ease-out transform
+       ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="w-full relative">
         <img
           src={project.image}
@@ -374,20 +407,64 @@ const ProjectCard = ({ project, borderStyle, delay }) => {
   );
 };
 
-
 const BackgroundTile = ({ isActive }) => (
-  <div 
-    className={`aspect-square transition-opacity duration-500 ${
+  <div
+     className={`aspect-square transition-opacity duration-500 ${
       isActive ? 'bg-[#8169B1] opacity-100' : 'bg-[#8169B1] opacity-0'
     }`}
   />
 );
 
+const TabButton = ({ active, onClick, children }) => (
+  <button
+    onClick={onClick}
+    className={`px-6 py-2 font-didact font-bold text-lg transition-all duration-300 
+      ${active 
+        ? 'text-white bg-[#8169B1] border-t border-l border-r border-[#8169B1] rounded-t-lg relative -mb-px' 
+        : 'text-gray-300 hover:text-white bg-[#262626] border-t border-l border-r border-gray-600 rounded-t-lg'
+      }`}
+  >
+    {children}
+  </button>
+);
+
+const WorkExperienceItem = ({ experience, delay }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
+    
+    return () => clearTimeout(timer);
+  }, [delay]);
+  
+  return (
+    <div className={`border-2 border-[#8169B1] p-4 mb-4 transition-all duration-700 ease-out transform
+      ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-xl font-bold text-white font-didact">{experience.title}</h3>
+        <span className="text-gray-300 text-sm">{experience.period}</span>
+      </div>
+      <h4 className="text-lg text-[#8169B1] mb-2 font-didact">{experience.company}</h4>
+      <ul className="text-gray-300 space-y-2">
+        {experience.responsibilities.map((item, index) => (
+          <li key={index} className="flex items-start">
+            <span className="text-[#8169B1] mr-2">•</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 const WorkPage = () => {
   const [activeIndices, setActiveIndices] = useState(new Set());
+  const [activeTab, setActiveTab] = useState('projects'); // 'projects' or 'work'
   const gridSize = 6;
   const totalTiles = gridSize * gridSize;
-
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndices(prev => {
@@ -404,20 +481,18 @@ const WorkPage = () => {
         return newIndices;
       });
     }, 500);
-
+    
     return () => clearInterval(interval);
   }, []);
-
+  
   return (
     <div className="bg-[#1B1B1B] min-h-screen relative w-full">
       <div className="border-b-2 border-[#8169B1] bg-[#1B1B1B] sticky top-0 z-20">
-        <h2 className="text-xl font-bold p-2 font-didact text-white">Work/EXP</h2>
+        <h2 className="text-xl font-bold p-2 font-didact text-white">Project/Work</h2>
       </div>
-
+      
       <div className="relative pb-20 bg-[#1B1B1B]">
-        <div className="fixed inset-0 grid grid-cols-4 gap-4 p-4, gap-1 xs:gap-1.5 sm:gap-2 md:gap-3
-
-">
+        <div className="fixed inset-0 grid grid-cols-4 gap-4 p-4, gap-1 xs:gap-1.5 sm:gap-2 md:gap-3">
           {[...Array(totalTiles)].map((_, index) => (
             <BackgroundTile
               key={index}
@@ -425,29 +500,57 @@ const WorkPage = () => {
             />
           ))}
         </div>
-
+        
         <div className="relative max-w-4xl mx-auto px-4 py-8">
           <div className="bg-[#1B1B1B] p-4 sm:p-6 md:p-8 rounded-lg shadow-2xl relative z-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-              {projects.map((project, index) => (
-                <div key={project.id} className="relative">
-                  <ProjectCard
-                    project={project}
-                    borderStyle={project.borderColor}
-                    delay={200 * index} // Stagger the animations
-                  />
-                </div>
-              ))}
+            <div className="flex mb-6">
+              <div className="flex flex-col md:flex-row gap-1 border-b border-[#8169B1] w-full">
+                <TabButton 
+                  active={activeTab === 'projects'} 
+                  onClick={() => setActiveTab('projects')}
+                >
+                  Projects
+                </TabButton>
+                <TabButton 
+                  active={activeTab === 'work'} 
+                  onClick={() => setActiveTab('work')}
+                >
+                  Work
+                </TabButton>
+              </div>
             </div>
+            
+            {activeTab === 'projects' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+                {projects.map((project, index) => (
+                  <div key={project.id} className="relative">
+                    <ProjectCard
+                      project={project}
+                      borderStyle={project.borderColor}
+                      delay={200 * index} // Stagger the animations
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {workExperiences.map((experience, index) => (
+                  <WorkExperienceItem 
+                    key={index} 
+                    experience={experience} 
+                    delay={200 * index}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
+      
       <div className="bg-[#1B1B1B] w-full h-20"></div>
     </div>
   );
 };
-
 
  /*start of playground ↓ */
 
@@ -473,6 +576,7 @@ const ScrollArrow = () => {
     </button>
   );
 };
+
 const ImageSlideshow = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -532,6 +636,130 @@ const ImageSlideshow = () => {
     </div>
   );
 };
+
+
+const ImageSlideshow2 = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  useEffect(() => {
+    setTimeout(() => setIsVisible(true), 200);
+  }, []);
+
+  const slideshowImages2 = [
+    {
+      id: "slide1",
+      source: "images/Paintings ^ (1).png",
+      className: "md:top-[-142rem] md:left-[40rem] top-[-110rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
+    },
+    {
+      id: "slide2",
+      source: "images/pAiNTinGs ^2.png",
+      className: "md:top-[-142rem] md:left-[40rem] top-[-110rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
+    },
+    {
+      id: "slide3",
+      source: "images/PAINTINGS ^3.png",
+      className: "md:top-[-142rem] md:left-[40rem] top-[-110rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
+    }
+  ];
+
+
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === slideshowImages2.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 280);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className={`absolute transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      {slideshowImages2.map((image, index) => (
+        <div
+          key={image.id}
+          className={`absolute ${image.className} ease-in-out
+            ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}
+            w-[500px] h-auto max-h-[600px] min-h-[300px]`}
+        >
+          <div className="relative w-full h-full">
+            <img
+              src={image.source}
+              alt={`Slide ${index + 1}`}
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
+
+const ImageSlideshow3 = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  useEffect(() => {
+    setTimeout(() => setIsVisible(true), 200);
+  }, []);
+
+  const slideshowImages3 = [
+    {
+      id: "slide1",
+      source: "images/sKETcHEs ^ (1).png",
+      className: "md:top-[-28rem] md:left-[13rem] top-[25rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
+    },
+    {
+      id: "slide2",
+      source: "images/SkeTCheS ^ (2).png",
+      className: "md:top-[-28rem] md:left-[13rem] top-[25rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
+    },
+    {
+      id: "slide3",
+      source: "images/Sketches ^.png",
+      className: "md:top-[-28rem] md:left-[13rem] top-[25rem] left-[0rem] w-[13rem]  h-[20rem]  md:w-[38rem] md:h-[41rem]"
+    }
+  ];
+
+
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === slideshowImages3.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 280);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className={`absolute transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      {slideshowImages3.map((image, index) => (
+        <div
+          key={image.id}
+          className={`absolute ${image.className} ease-in-out
+            ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}
+            w-[500px] h-auto max-h-[600px] min-h-[300px]`}
+        >
+          <div className="relative w-full h-full">
+            <img
+              src={image.source}
+              alt={`Slide ${index + 1}`}
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 
 const FreeStyleGallery = () => {
   const [visibleItems, setVisibleItems] = useState({});
@@ -656,6 +884,7 @@ const FreeStyleGallery = () => {
         }
       `}</style>
       <ImageSlideshow />
+
     </div>
   );
 };
@@ -739,13 +968,82 @@ const GridGallery = ({ forceAnimate }) => {
       position: "lg:top-[38rem] lg:left-[41rem] top-[86rem] left-[5rem]"
     },
     {
-      id: 8,
+      id: 7,
       title: "fullhow",
       source: "images/zoro.png",
       width: "w-[13rem] lg:w-[39rem]",
       height: "h-[12rem] lg:h-[36rem]",
       position: "lg:top-[72rem] lg:left-[41rem] top-[104rem] left-[8rem]"
     }
+    ,
+
+    {
+      id: 8,
+      title: "fullhow",
+      source: "images/pokemoncards.png",
+      width: "w-[10rem] lg:w-[21rem]",
+      height: "h-[14rem] lg:h-[29rem]",
+      position: "lg:top-[104rem] lg:left-[16rem] top-[120rem] left-[9.5rem]"
+    }, 
+    {
+      id: 9,
+      title: "fullhow",
+      source: "images/Sketch1.png",
+      width: "w-[20rem] lg:w-[32rem]",
+      height: "h-[14rem] lg:h-[20rem]",
+      position: "lg:top-[140rem] lg:left-[48rem] top-[149rem] left-[5rem]"
+    }, 
+    {
+      id: 10,
+      title: "fullhow",
+      source: "images/clourctrlsketch.png",
+      width: "w-[22rem] lg:w-[30rem]",
+      height: "h-[14rem] lg:h-[19rem]",
+      position: "lg:top-[140rem] lg:left-[16rem] top-[165rem] left-[4.4rem]"
+    }, 
+
+    {
+      id: 11,
+      title: "fullhow",
+      source: "images/Sketch2.png",
+      width: "w-[24rem] lg:w-[32rem]",
+      height: "h-[14rem] lg:h-[20rem]",
+      position: "lg:top-[161.3rem] lg:left-[48rem] top-[182rem] left-[3.4rem]"
+    }, 
+    {
+      id: 12,
+      title: "fullhow",
+      source: "images/zorosketch.png",
+      width: "w-[22rem] lg:w-[30rem]",
+      height: "h-[15rem] lg:h-[20rem]",
+      position: "lg:top-[161rem] lg:left-[16rem] top-[199rem] left-[4.5rem]"
+    }, 
+    {
+      id: 13,
+      title: "fullhow",
+      source: "images/choppersketch.png",
+      width: "w-[16rem] lg:w-[30rem]",
+      height: "h-[14rem] lg:h-[27rem]",
+      position: "lg:top-[183rem] lg:left-[50rem] top-[217rem] left-[7rem]"
+    }, 
+
+    {
+      id: 14,
+      title: "fullhow",
+      source: "images/merrysketch.png",
+      width: "w-[15rem] lg:w-[33rem]",
+      height: "h-[18rem] lg:h-[40rem]",
+      position: "lg:top-[183rem] lg:left-[16rem] top-[233rem] left-[8rem]"
+    }, 
+    {
+      id: 15,
+      title: "fullhow",
+      source: "images/soulkingsketch.png",
+      width: "w-[20rem] lg:w-[27rem]",
+      height: "h-[14rem] lg:h-[19rem]",
+      position: "lg:top-[211.4rem] lg:left-[51rem] top-[253rem] left-[5rem]"
+    }, 
+
   ];
 
   // Calculate the maximum height needed based on the positions and heights of images
@@ -782,6 +1080,9 @@ const GridGallery = ({ forceAnimate }) => {
           </div>
         ))}
       </div>
+      <ImageSlideshow2 />
+      <ImageSlideshow3 />
+
     </div>
   );
 };
@@ -792,6 +1093,7 @@ const PlaygroundPage = () => {
   const handleScrollClick = () => {
     setShouldAnimateGrid(true);
   };
+
 
   return (
     <div className="h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory bg-[#1B1B1B]">
