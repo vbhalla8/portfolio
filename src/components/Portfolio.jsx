@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Github, Linkedin, Mail, Code, FileText, Menu, X, ExternalLink, ChevronDown } from 'lucide-react';
 
 const VerticalScrollingText = () => (
@@ -553,6 +553,10 @@ const WorkPage = () => {
 };
 
  /*start of playground ↓ */
+
+
+
+ 
 
 const ScrollArrow = () => {
   const scrollToNext = () => {
