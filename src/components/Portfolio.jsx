@@ -33,8 +33,28 @@ const VerticalScrollingText = () => (
 const projects = [
   {
     id: 1,
+    title: "DE >TERMINAL",
+    image: "images/determ (1).png",
+    description: "Led UX/UI design and brand identity development for a cryptocurrency trading terminal, creating an intuitive interface that balanced financial functionality with an accessible user experience.",
+    borderColor: "border-gray-300",
+    liveUrl: "https://www.figma.com/design/tnNXfVj8pGExQL0FFfFfCC/Untitled?node-id=0-1&t=AtmCONCzi0qmO5xT-1"
+
+    
+  },
+  {
+    id: 1,
     title: "Graphic Medicen",
     image: "images/graph (1).png",
+    description: "Collaborated with the website team to develop and launch the Graphic Medicine website as part of Georgia Tech's VIP program. Integrated Figma mockups into a WordPress platform, ensuring seamless functionality and visual appeal.",
+    borderColor: "border-gray-300",
+    liveUrl: "https://sites.gatech.edu/graphicmedicinelab/"
+
+    
+  },
+  {
+    id: 1,
+    title: "Broconomy",
+    image: "images/brocon.png",
     description: "Collaborated with the website team to develop and launch the Graphic Medicine website as part of Georgia Tech's VIP program. Integrated Figma mockups into a WordPress platform, ensuring seamless functionality and visual appeal.",
     borderColor: "border-gray-300",
     liveUrl: "https://sites.gatech.edu/graphicmedicinelab/"
@@ -87,6 +107,7 @@ const projects = [
 
 
 const workExperiences = [
+  
   {
     title: "Teaching Assistant",
     company: "Georgia Insitute of Technology",
@@ -186,9 +207,9 @@ const HomePage = () => (
             </h2>
           </div>
 
-          <div className="text-white text-lg md:text-2xl max-w-lg space-y-4 px-4 md:px-0">
+          <div className="text-[#D2D2D2] text-lg md:text-2xl max-w-lg space-y-4 px-4 md:px-0">
             <p>
-              I am currently an undergraduate student at Georgia Institute of
+             ❀ I am currently an undergraduate student at Georgia Institute of
               Technology. I'm pursuing a B.S. in Computational Media with a focus on
               Intelligence and Interaction Design, combining technical proficiency with
               design thinking to create impactful, user-focused solutions. I specialize in
@@ -517,7 +538,8 @@ const WorkPage = () => {
               </div>
             </div>
             
-            {activeTab === 'projects' ? (
+            {/* Only render Project cards when projects tab is active */}
+            {activeTab === 'projects' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                 {projects.map((project, index) => (
                   <div key={project.id} className="relative">
@@ -529,7 +551,10 @@ const WorkPage = () => {
                   </div>
                 ))}
               </div>
-            ) : (
+            )}
+            
+            {/* Only render Work experience items when work tab is active */}
+            {activeTab === 'work' && (
               <div className="space-y-6">
                 {workExperiences.map((experience, index) => (
                   <WorkExperienceItem 
@@ -548,7 +573,6 @@ const WorkPage = () => {
     </div>
   );
 };
-
  /*start of playground ↓ */
 
 // Interactive dot background that will be applied via CSS instead of a component
@@ -559,7 +583,7 @@ const dotBackgroundStyle = `
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(#555 1px, transparent 1px);
+    background-image: radial-gradient(#555 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: 1;
@@ -619,7 +643,7 @@ const ScrollArrow = () => {
     >
       <ChevronDown 
         size={48} 
-        className="animate-bounce hover:scale-110 transition-transform duration-200"
+        className="animate-bounce hover:scale-110 transition-transform duration-500"
       />
     </button>
   );
