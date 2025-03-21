@@ -55,9 +55,9 @@ const projects = [
     id: 1,
     title: "Broconomy",
     image: "images/brocon.png",
-    description: "Collaborated with the website team to develop and launch the Graphic Medicine website as part of Georgia Tech's VIP program. Integrated Figma mockups into a WordPress platform, ensuring seamless functionality and visual appeal.",
+    description: "Worked on a Unity game which deals with concerns about climate change and human damages to the environment",
     borderColor: "border-gray-300",
-    liveUrl: "https://sites.gatech.edu/graphicmedicinelab/"
+    liveUrl: "https://www.figma.com/design/0wcnCcXewFMbp2fAwCB31F/Untitled?node-id=0-1&t=yBmT804bFZmvRhUi-1"
 
     
   },
