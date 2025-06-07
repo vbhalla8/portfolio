@@ -199,23 +199,24 @@ HomeNavigation.propTypes = {
 
 
 
-// HomePage Component - Changed to prevent scrolling by using fixed height
+// HomePage Component - Enhanced responsiveness
 const HomePage = () => (
-  // Changed from min-h-screen to h-screen to lock the height to viewport
-  <div className="h-screen flex flex-col md:flex-row bg-[#E4E4E2] overflow-hidden">
+  <div className="min-h-screen flex flex-col lg:flex-row bg-[#E4E4E2] overflow-hidden">
     {/* Left side - About Me Section */}
-    <div className="w-full md:w-2/5">
+    <div className="w-full lg:w-2/5 min-h-screen lg:min-h-0">
       <div className="bg-[#1B1B1B] min-h-screen relative">
-        <div className="p-4 md:p-8">
-          <div className="mb-1">
-            <h2 className="text-white text-2xl md:text-3xl mb-3 justify-center md:ml-40">
+        <div className="p-4 sm:p-6 lg:p-8">
+          {/* About Me Header */}
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-white text-xl sm:text-2xl lg:text-3xl mb-3 text-center lg:text-left lg:ml-40">
               <span>✽</span> About Me <span>✽</span>
             </h2>
           </div>
 
-          <div className="text-[#D2D2D2] text-lg md:text-2xl max-w-lg space-y-4 px-4 md:px-0">
-            <p>
-             ❀ I am currently an undergraduate student at Georgia Institute of
+          {/* About Me Text */}
+          <div className="text-[#D2D2D2] text-base sm:text-lg lg:text-xl xl:text-2xl max-w-none lg:max-w-lg space-y-3 sm:space-y-4 px-2 sm:px-4 lg:px-0">
+            <p className="leading-relaxed">
+              ❀ I am currently an undergraduate student at Georgia Institute of
               Technology. I am pursuing a B.S. in Computational Media with a focus on
               Intelligence and Interaction Design, combining technical proficiency with
               design thinking to create impactful, user-focused solutions. I specialize in
@@ -224,36 +225,39 @@ const HomePage = () => (
             </p>
           </div>
 
-          <div className="hidden md:block absolute top-90 right-20 w-60 h-[403px]">
+          {/* Desktop profile image - hidden on mobile/tablet */}
+          <div className="hidden xl:block absolute top-90 right-20 w-48 xl:w-60 h-auto">
             <img
               src="images/portpic.png"
               alt="port pic"
-              className="w-full h-full object-cover -translate-y-5 translate-x-420 transform transition-transform duration-300 hover:-translate-y-9"
+              className="w-full h-auto object-cover -translate-y-5 translate-x-420 transform transition-transform duration-300 hover:-translate-y-9"
             />
           </div>
 
           {/* Social links section */}
-          <div className="mt-6 md:mt-10">
-            <p className="text-purple-400 text-3xl md:text-4xl mb-4 md:mb-6 text-center md:text-left">let&apos;s connect !</p>
+          <div className="mt-6 sm:mt-8 lg:mt-10">
+            <p className="text-purple-400 text-2xl sm:text-3xl lg:text-4xl mb-4 sm:mb-6 text-center lg:text-left">
+              let&apos;s connect !
+            </p>
 
-            <div className="flex flex-row md:flex-col justify-center md:ml-20 gap-6 md:gap-10">
+            <div className="flex flex-row lg:flex-col justify-center lg:justify-start lg:ml-20 gap-4 sm:gap-6 lg:gap-10">
               <a
                 href="https://github.com/vbhalla8"
-                className="bg-white rounded-full p-2 md:p-3 w-12 h-12 md:w-16 md:h-16 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
+                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
               >
-                <Github className="w-6 h-6 md:w-8 md:h-8" />
+                <Github className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
               </a>
               <a
                 href="https://www.linkedin.com/in/vaishnavibhalla/"
-                className="bg-white rounded-full p-2 md:p-3 w-12 h-12 md:w-16 md:h-16 flex items-center justify-center hover:bg-[#8169B1]  transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
+                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
               >
-                <Linkedin className="w-6 h-6 md:w-8 md:h-8" />
+                <Linkedin className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
               </a>
               <a
                 href="mailto:vbhalla8@gatech.edu"
-                className="bg-white rounded-full p-2 md:p-3 w-12 h-12 md:w-16 md:h-16 flex items-center justify-center hover:bg-[#8169B1]  transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
+                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
               >
-                <Mail className="w-6 h-6 md:w-8 md:h-8" />
+                <Mail className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
               </a>
             </div>
           </div>
@@ -265,34 +269,36 @@ const HomePage = () => (
     </div>
 
     {/* Right side */}
-    <div className="w-full md:w-1/2 mt-[-.3rem]">
-      <div className="flex flex-col items-center bg-[#E4E4E2] justify-center p-4 md:p-8 mt-8 md:mt-32">
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(-3px); }
-          50% { transform: translateY(-8px); }
-        }
-        .floating-jellyfish {
-          animation: float 5s ease-in-out infinite;
-        }
-      `}</style>
-      <img
-          src="images/Jellyfishhehe.png"
-          alt="Jelly Image"
-          className="relative object-cover w-full max-w-md md:max-w-none md:w-[600px] h-auto md:h-[500px] floating-jellyfish"
-          style={{
-            top: "-29px",
-            right: '-76px',
-            md: { right: '-100px' },
-            flexShrink: 0
-          }}
-        />
+    <div className="w-full lg:w-3/5 flex-1">
+      <div className="flex flex-col items-center bg-[#E4E4E2] justify-center p-4 sm:p-6 lg:p-8 min-h-screen lg:min-h-0 lg:mt-16 xl:mt-32">
+        <style>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(-3px); }
+            50% { transform: translateY(-8px); }
+          }
+          .floating-jellyfish {
+            animation: float 5s ease-in-out infinite;
+          }
+        `}</style>
+        
+        {/* Jellyfish Image */}
+        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+          <img
+            src="images/Jellyfishhehe.png"
+            alt="Jelly Image"
+            className="w-full h-auto object-contain floating-jellyfish"
+          />
+        </div>
 
-
-        <div className="text-center md:ml-40 -mt-2">
-          <h1 className="text-4xl md:text-6xl font-bold ml-text-black-000 font-didact mb-1">Vaishnavi Bhalla</h1>
-          <h2 className="text-2xl md:text-3xl text-purple-800 mb-1">BS in Computational Media</h2>
-          <p className="text-xl md:text-2xl text-gray-600 ">
+        {/* Text content */}
+        <div className="text-center mt-4 sm:mt-6 lg:mt-8 lg:ml-20 xl:ml-40 px-4 sm:px-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black font-didact mb-1 sm:mb-2 leading-tight">
+            Vaishnavi Bhalla
+          </h1>
+          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-purple-800 mb-1 sm:mb-2">
+            BS in Computational Media
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 leading-relaxed">
             Concentration in Intelligence and Interactive Design
           </p>
         </div>
@@ -686,12 +692,12 @@ const ImageSlideshow = () => {
     {
       id: "slide2",
       source: "images/Playground copy.png",
-      className: "md:top-[13rem] md:left-[40rem] top-[10rem] left-[1rem] w-[10rem] md:w-[45rem] h-[30rem] md:h-[41rem]"
+      className: "md:top-[13rem] md:left-[40rem] top-[20rem] left-[1rem] w-[10rem] md:w-[45rem] h-[30rem] md:h-[41rem]"
     },
     {
       id: "slide3",
       source: "images/pLAYGROUND.png",
-      className: "md:top-[13rem] md:left-[40rem] top-[10rem] left-[1rem] w-[10rem] md:w-[45rem] h-[30rem] md:h-[41rem]"
+      className: "md:top-[13rem] md:left-[40rem] top-[20rem] left-[1rem] w-[10rem] md:w-[45rem] h-[30rem] md:h-[41rem]"
     }
   ];
 
