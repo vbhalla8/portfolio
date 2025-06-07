@@ -235,8 +235,8 @@ const HomePage = () => (
           </div>
 
           {/* Social links section */}
-          <div className="mt-4 sm:mt-6">
-            <p className="text-purple-400 text-xl sm:text-2xl lg:text-3xl mb-3 sm:mb-4 text-center lg:text-left">
+          <div className="mt-2 sm:mt-3">
+            <p className="text-purple-400 text-xl sm:text-2xl lg:text-3xl mb-3 sm:mb-4 text-center lg:text-left lg:ml-6">
               let&apos;s connect !
             </p>
 
