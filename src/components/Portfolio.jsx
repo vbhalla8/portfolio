@@ -199,22 +199,22 @@ HomeNavigation.propTypes = {
 
 
 
-// HomePage Component - Enhanced responsiveness
+// HomePage Component - Fixed to prevent scroll and fit content properly
 const HomePage = () => (
-  <div className="min-h-screen flex flex-col lg:flex-row bg-[#E4E4E2] overflow-hidden">
+  <div className="h-screen flex flex-col lg:flex-row bg-[#E4E4E2] overflow-hidden">
     {/* Left side - About Me Section */}
-    <div className="w-full lg:w-2/5 min-h-screen lg:min-h-0">
-      <div className="bg-[#1B1B1B] min-h-screen relative">
-        <div className="p-4 sm:p-6 lg:p-8">
+    <div className="w-full lg:w-2/5 h-screen">
+      <div className="bg-[#1B1B1B] h-full relative">
+        <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col justify-between">
           {/* About Me Header */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-4">
             <h2 className="text-white text-xl sm:text-2xl lg:text-3xl mb-3 text-center lg:text-left lg:ml-40">
               <span>✽</span> About Me <span>✽</span>
             </h2>
           </div>
 
           {/* About Me Text */}
-          <div className="text-[#D2D2D2] text-base sm:text-lg lg:text-xl xl:text-2xl max-w-none lg:max-w-lg space-y-3 sm:space-y-4 px-2 sm:px-4 lg:px-0">
+          <div className="text-[#D2D2D2] text-sm sm:text-base lg:text-lg xl:text-xl max-w-none lg:max-w-lg space-y-2 sm:space-y-3 px-2 sm:px-4 lg:px-0 flex-1">
             <p className="leading-relaxed">
               ❀ I am currently an undergraduate student at Georgia Institute of
               Technology. I am pursuing a B.S. in Computational Media with a focus on
@@ -225,39 +225,39 @@ const HomePage = () => (
             </p>
           </div>
 
-          {/* Desktop profile image - hidden on mobile/tablet */}
-          <div className="hidden xl:block absolute top-90 right-20 w-48 xl:w-60 h-auto">
+          {/* Desktop profile image - moved down more */}
+          <div className="hidden xl:block absolute bottom-[1rem] right-20 w-48 xl:w-60 h-auto">
             <img
               src="images/portpic.png"
               alt="port pic"
-              className="w-full h-auto object-cover -translate-y-5 translate-x-420 transform transition-transform duration-300 hover:-translate-y-9"
+              className="w-full h-auto object-cover transform transition-transform duration-300 hover:-translate-y-2"
             />
           </div>
 
           {/* Social links section */}
-          <div className="mt-6 sm:mt-8 lg:mt-10">
-            <p className="text-purple-400 text-2xl sm:text-3xl lg:text-4xl mb-4 sm:mb-6 text-center lg:text-left">
+          <div className="mt-4 sm:mt-6">
+            <p className="text-purple-400 text-xl sm:text-2xl lg:text-3xl mb-3 sm:mb-4 text-center lg:text-left">
               let&apos;s connect !
             </p>
 
-            <div className="flex flex-row lg:flex-col justify-center lg:justify-start lg:ml-20 gap-4 sm:gap-6 lg:gap-10">
+            <div className="flex flex-row lg:flex-col justify-center lg:justify-start lg:ml-20 gap-3 sm:gap-4 lg:gap-6">
               <a
                 href="https://github.com/vbhalla8"
-                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
+                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
               >
-                <Github className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
+                <Github className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
               </a>
               <a
                 href="https://www.linkedin.com/in/vaishnavibhalla/"
-                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
+                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
               >
-                <Linkedin className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
+                <Linkedin className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
               </a>
               <a
                 href="mailto:vbhalla8@gatech.edu"
-                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
+                className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
               >
-                <Mail className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
+                <Mail className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
               </a>
             </div>
           </div>
@@ -269,8 +269,8 @@ const HomePage = () => (
     </div>
 
     {/* Right side */}
-    <div className="w-full lg:w-3/5 flex-1">
-      <div className="flex flex-col items-center bg-[#E4E4E2] justify-center p-4 sm:p-6 lg:p-8 min-h-screen lg:min-h-0 lg:mt-16 xl:mt-32">
+    <div className="w-full lg:w-3/5 h-screen">
+      <div className="flex flex-col items-center bg-[#E4E4E2] justify-center p-4 sm:p-6 lg:p-8 h-full mt-8 lg:mt-12">
         <style>{`
           @keyframes float {
             0%, 100% { transform: translateY(-3px); }
@@ -282,7 +282,7 @@ const HomePage = () => (
         `}</style>
         
         {/* Jellyfish Image */}
-        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mb-6">
           <img
             src="images/Jellyfishhehe.png"
             alt="Jelly Image"
@@ -290,15 +290,15 @@ const HomePage = () => (
           />
         </div>
 
-        {/* Text content */}
-        <div className="text-center mt-4 sm:mt-6 lg:mt-8 lg:ml-20 xl:ml-40 px-4 sm:px-6">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black font-didact mb-1 sm:mb-2 leading-tight">
+        {/* Text content - moved down */}
+        <div className="text-center px-4 sm:px-6 mt-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-black font-didact mb-1 sm:mb-2 leading-tight">
             Vaishnavi Bhalla
           </h1>
-          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-purple-800 mb-1 sm:mb-2">
+          <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-purple-800 mb-1 sm:mb-2">
             BS in Computational Media
           </h2>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 leading-relaxed">
             Concentration in Intelligence and Interactive Design
           </p>
         </div>
