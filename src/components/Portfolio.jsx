@@ -1417,7 +1417,7 @@ const EyeTracker = ({ isDarkMode }) => {
   }, [mousePosition]);
 
   const renderEye = () => (
-    <div className="relative w-[5rem] h-[5rem] right-[20rem] top-[1rem] flex items-center justify-center bg-white rounded-full shadow-lg">
+    <div className="relative w-10 h-10 md:w-12 md:h-12 bg-white rounded-full border-2 border-gray-300 shadow-lg">
       {/* White of the eye */}
       <div className="absolute w-[5rem] h-[5rem] rounded-full bg-white border-4 border-gray-200">
         {/* Iris */}
@@ -1449,30 +1449,12 @@ const EyeTracker = ({ isDarkMode }) => {
     </div>
   );
 
-  const renderStar = () => (
-    <div className="relative w-[5rem] h-[5rem] right-[20rem] top-[1rem] flex items-center justify-center">
-      <svg 
-        viewBox="0 0 100 100" 
-        className="w-[5rem] h-[5rem]"
-        style={{
-          transform: `translate(${pupilPosition.x}px, ${pupilPosition.y}px)`,
-          transition: 'transform 0.1s ease-out'
-        }}
-      >
-        <path
-          className="fill-purple-400"
-          d="M50 0 L61 35 L97 35 L68 57 L79 91 L50 70 L21 91 L32 57 L3 35 L39 35 Z"
-        />
-      </svg>
-    </div>
-  );
-
   return (
     <div className="fixed flex gap-16 top-[21rem] right-[20rem] z-50">
       {isDarkMode ? (
         <>
-          {renderStar()}
-          {renderStar()}
+          {renderEye()}
+          {renderEye()}
         </>
       ) : (
         <>
@@ -1545,13 +1527,13 @@ const PenguinWithEyes = ({ isDarkMode, isHoveringClickMe }) => {
   }, [mousePosition]);
 
   const renderEye = (side) => (
-    <div className="relative w-6 h-6 md:w-8 md:h-8 bg-white rounded-full border-2 border-gray-300 shadow-lg">
+    <div className="relative w-10 h-10 md:w-12 md:h-12 bg-white rounded-full border-2 border-gray-300 shadow-lg">
       {isHoveringClickMe ? (
         // Purple star eye when hovering over "click me"
         <div className="absolute inset-0 flex items-center justify-center">
           <svg 
             viewBox="0 0 100 100" 
-            className="w-4 h-4 md:w-5 md:h-5 fill-purple-500 animate-pulse"
+            className="w-6 h-6 md:w-8 md:h-8 fill-purple-500 animate-pulse"
           >
             <path d="M50 0 L61 35 L97 35 L68 57 L79 91 L50 70 L21 91 L32 57 L3 35 L39 35 Z" />
           </svg>
@@ -1559,7 +1541,7 @@ const PenguinWithEyes = ({ isDarkMode, isHoveringClickMe }) => {
       ) : (
         // Normal pupil
         <div 
-          className="absolute w-3 h-3 md:w-4 md:h-4 bg-black rounded-full transition-transform duration-100 ease-out"
+          className="absolute w-5 h-5 md:w-6 md:h-6 bg-black rounded-full transition-transform duration-100 ease-out"
           style={{
             left: '50%',
             top: '50%',
@@ -1567,7 +1549,7 @@ const PenguinWithEyes = ({ isDarkMode, isHoveringClickMe }) => {
           }}
         >
           {/* Light reflection */}
-          <div className="absolute w-1 h-1 md:w-1.5 md:h-1.5 bg-white rounded-full top-0.5 left-0.5" />
+          <div className="absolute w-2 h-2 md:w-2.5 md:h-2.5 bg-white rounded-full top-0.5 left-0.5" />
         </div>
       )}
     </div>
