@@ -152,13 +152,26 @@ const workExperiences = [
 const HomeNavigation = ({ setActivePage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Add/remove body class when mobile menu opens/closes
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
-      {/* Mobile Menu Button */}
-      <div className="md:hidden absolute top-[1em] left-[29em] z-50">
+      {/* Mobile Menu Button - Fixed positioning */}
+      <div className="md:hidden fixed top-4 right-4 z-50">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 bg-[#8169B1] text-white rounded-md"
+          className="p-3 bg-[#8169B1] text-white rounded-md shadow-lg touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -169,11 +182,11 @@ const HomeNavigation = ({ setActivePage }) => {
         <div className="md:hidden fixed inset-0 bg-[#8169B1] z-40 flex items-center justify-center">
           <div className="flex flex-col gap-8 text-white text-xl">
             <a onClick={() => { setActivePage('work'); setIsMobileMenuOpen(false); }} 
-               className="cursor-pointer hover:text-purple-200">Work</a>
+               className="cursor-pointer hover:text-purple-200 transition-colors p-4 touch-manipulation">Work</a>
             <a onClick={() => { setActivePage('playground'); setIsMobileMenuOpen(false); }}
-               className="cursor-pointer hover:text-purple-200">Playground</a>
+               className="cursor-pointer hover:text-purple-200 transition-colors p-4 touch-manipulation">Playground</a>
             <a onClick={() => { setActivePage('resume'); setIsMobileMenuOpen(false); }}
-               className="cursor-pointer hover:text-purple-200">Resume</a>
+               className="cursor-pointer hover:text-purple-200 transition-colors p-4 touch-manipulation">Resume</a>
           </div>
         </div>
       )}
@@ -201,9 +214,9 @@ HomeNavigation.propTypes = {
 
 // HomePage Component - Fixed to prevent scroll and fit content properly
 const HomePage = () => (
-  <div className="h-screen flex flex-col lg:flex-row bg-[#E4E4E2] overflow-hidden">
+  <div className="min-h-screen flex flex-col lg:flex-row bg-[#E4E4E2] overflow-hidden">
     {/* Left side - About Me Section */}
-    <div className="w-full lg:w-2/5 h-screen">
+    <div className="w-full lg:w-2/5 min-h-screen">
       <div className="bg-[#1B1B1B] h-full relative">
         <div className="p-4 sm:p-6 lg:p-8 h-full flex flex-col justify-between">
           {/* About Me Header */}
@@ -269,7 +282,7 @@ const HomePage = () => (
     </div>
 
     {/* Right side */}
-    <div className="w-full lg:w-3/5 h-screen">
+    <div className="w-full lg:w-3/5 min-h-screen">
       <div className="flex flex-col items-center bg-[#E4E4E2] justify-center p-4 sm:p-6 lg:p-8 h-full mt-8 lg:mt-12">
         <style>{`
           @keyframes float {
@@ -319,6 +332,19 @@ const SideNavigation = ({ activePage, setActivePage }) => {
     }, 800);
     return () => clearInterval(interval);
   }, [isHovered]);
+
+  // Add/remove body class when mobile menu opens/closes
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [isMobileMenuOpen]);
   
   return (
     <>
@@ -326,7 +352,7 @@ const SideNavigation = ({ activePage, setActivePage }) => {
       <div className="md:hidden fixed top-4 right-4 z-50">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 bg-[#8169B1] text-white rounded-md"
+          className="p-3 bg-[#8169B1] text-white rounded-md shadow-lg touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -337,19 +363,19 @@ const SideNavigation = ({ activePage, setActivePage }) => {
         <div className="md:hidden fixed inset-0 bg-[#8169B1] z-40 flex items-center justify-center">
           <div className="flex flex-col gap-8 text-white text-xl">
             <a onClick={() => { setActivePage('home'); setIsMobileMenuOpen(false); }} 
-               className={`cursor-pointer hover:text-purple-200 ${activePage === 'home' ? 'text-purple-200' : ''}`}>
+               className={`cursor-pointer hover:text-purple-200 transition-colors p-4 touch-manipulation ${activePage === 'home' ? 'text-purple-200' : ''}`}>
               Home
             </a>
             <a onClick={() => { setActivePage('work'); setIsMobileMenuOpen(false); }}
-               className={`cursor-pointer hover:text-purple-200 ${activePage === 'work' ? 'text-purple-200' : ''}`}>
+               className={`cursor-pointer hover:text-purple-200 transition-colors p-4 touch-manipulation ${activePage === 'work' ? 'text-purple-200' : ''}`}>
               Work
             </a>
             <a onClick={() => { setActivePage('playground'); setIsMobileMenuOpen(false); }}
-               className={`cursor-pointer hover:text-purple-200 ${activePage === 'playground' ? 'text-purple-200' : ''}`}>
+               className={`cursor-pointer hover:text-purple-200 transition-colors p-4 touch-manipulation ${activePage === 'playground' ? 'text-purple-200' : ''}`}>
               Playground
             </a>
             <a onClick={() => { setActivePage('resume'); setIsMobileMenuOpen(false); }}
-               className={`cursor-pointer hover:text-purple-200 ${activePage === 'resume' ? 'text-purple-200' : ''}`}>
+               className={`cursor-pointer hover:text-purple-200 transition-colors p-4 touch-manipulation ${activePage === 'resume' ? 'text-purple-200' : ''}`}>
               Resume
             </a>
           </div>
@@ -559,7 +585,7 @@ const WorkPage = () => {
   
   return (
     <div className="bg-[#1B1B1B] min-h-screen relative w-full overflow-hidden">
-      <div className="relative pb-20 bg-[#1B1B1B]">
+      <div className="relative pb-20 bg-[#1B1B1B] pt-16 md:pt-8">
         <div className="fixed inset-0 grid grid-cols-3 grid-rows-3 scale-125">
           {[...Array(totalTiles)].map((_, index) => (
             <BackgroundTile
@@ -1343,7 +1369,7 @@ const PlaygroundPage = () => {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-16 md:pt-0">
       <div className="min-h-screen">
         <MouseMoveHandler>
           <div className="min-h-screen relative container-with-dots">
@@ -1422,7 +1448,7 @@ const EyeTracker = ({ isDarkMode }) => {
       <div className="absolute w-[5rem] h-[5rem] rounded-full bg-white border-4 border-gray-200">
         {/* Iris */}
         <div 
-          className="absolute w-[5rem] h-[5rem rounded-full bg-[#654ea3]"
+          className="absolute w-[5rem] h-[5rem] rounded-full bg-[#654ea3]"
           style={{
             top: '50%',
             left: '50%',
@@ -1450,7 +1476,7 @@ const EyeTracker = ({ isDarkMode }) => {
   );
 
   return (
-    <div className="fixed flex gap-16 top-[21rem] right-[20rem] z-50">
+    <div className="hidden md:flex fixed gap-16 top-[21rem] right-[20rem] z-50">
       {isDarkMode ? (
         <>
           {renderEye()}
@@ -1630,7 +1656,7 @@ const ResumePage = () => {
   };
 
   return (
-    <div className={`min-h-screen relative overflow-hidden transition-all duration-700 ease-in-out ${
+    <div className={`min-h-screen relative overflow-hidden transition-all duration-700 ease-in-out pt-16 md:pt-0 ${
       isDarkMode 
         ? 'bg-gradient-to-br from-[#0a0a0a] via-[#1B1B1B] to-[#2d1b3d]' 
         : 'bg-gradient-to-br from-[#f8f8f6] via-[#E4E4E2] to-[#d4d4d0]'
