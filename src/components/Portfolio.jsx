@@ -34,12 +34,12 @@ const VerticalScrollingText = () => (
 const projects = [
   {
     id: 1,
-    title: "DE >TERMINAL",
-    image: "images/determ (1).png",
-    description: "Led UX/UI design and Frontend development for a cryptocurrency trading terminal, creating an intuitive interface with a clean and modern design.",
+    title: "Month.ly",
+    image: "images/month.ly.png",
+    description: "Developed a full-stack menstrual health tracking application using React Native for cross-platform mobile development,ensuring consistent user experience across iOS and Android devices",
     borderColor: "border-gray-300",
-    liveUrl: "https://www.determinal.app/",
-    figmaUrl: "https://www.figma.com/design/w6Ph0GIgpRGpULOz5z9KpL/UI-Components-Library-%3EDeterminal?node-id=2869-1009&t=jLZzgiJI8LzZ3CKF-1"
+    liveUrl:"",
+    figmaUrl: "https://www.figma.com/design/AmKiLTvEP5VwuOkuNCWb8S/Month.ly?node-id=0-1&p=f&t=tbBgc1X75kGSMT33-0"
   },
   {
     id: 1,
@@ -111,23 +111,25 @@ const projects = [
 const workExperiences = [
   
   {
+    title: "Full-Stack Intern",
+    company: "De >Terminal",
+    period: "May 2025 - August 2025",
+    companyUrl: "https://www.determinal.app/", // Add this property
+    responsibilities: [
+      "Designed and developed comprehensive UI/UX component library using Figma, creating landing pages, user dashboards and brand identity systems to ensure consistent design patterns across web applications",
+      "Built responsive front-end applications using React, TypeScript, and Tailwind CSS, translating Figma prototypes into production-ready components with mobile-first responsive design principles",
+      " Integrated APIs and external services including Twitter API to fetch and display real-time cryptocurrency data, developing custom React components for data visualization within terminal-style interfaces",
+      "Led development of intuitive tabbed navigation system implementing streamlined UI architecture that reduced user task completion time by enabling one-click access to trading tools, market data, and social feeds, reducing user task completion time by 40%"
+    ]
+  },
+  {
     title: "Teaching Assistant",
     company: "Georgia Insitute of Technology",
-    period: "Jan 2025 - Present",
+    period: "Jan 2025 - May 2025",
     responsibilities: [
       "Addressed students' lecture and homework questions, providing clarification and support",
       "Guided students in developing full-stack web applications using Django, emphasizing best practices in front-end and back-end integration",
       "Mentored students on debugging and optimizing their projects, focusing on scalability and performance",
-    ]
-  },
-  {
-    title: "UI/UX Design Intern",
-    company: "Indago",
-    period: "Summer 2024",
-    responsibilities: [
-      "Created wireframes and prototypes using Figma for client projects",
-      "Conducted user research and usability testing to improve user experience",
-      "Collaborated with development team to ensure design feasibility"
     ]
   },
   {
@@ -555,8 +557,20 @@ const WorkExperienceItem = ({ experience, delay }) => {
         <h3 className="text-xl font-bold text-white font-didact">{experience.title}</h3>
         <span className="text-[#8169B1] text-sm font-medium">{experience.period}</span>
       </div>
-      <h4 className="text-lg text-[#8169B1] mt-1 font-didact">{experience.company}</h4>
-      <ul className="text-gray-300 space-y-2 mt-4">
+      <h4 className="text-lg text-[#8169B1] mt-1 font-didact">
+  {experience.companyUrl ? (
+    <a 
+      href={experience.companyUrl} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="hover:text-purple-300 transition-colors duration-300 underline"
+    >
+      {experience.company}
+    </a>
+  ) : (
+    experience.company
+  )}
+</h4>      <ul className="text-gray-300 space-y-2 mt-4">
         {experience.responsibilities.map((item, index) => (
           <li key={index} className="flex items-start">
             <span className="text-[#8169B1] mr-2">•</span>
@@ -1747,7 +1761,7 @@ const ResumePage = () => {
           {/* Simple purple text link with hover detection */}
           <div className="relative group">
             <a 
-              href="images/VB_Resume.pdf"
+              href="images/VB_Resume_2025.pdf"
               target="_blank"
               rel="noopener noreferrer"
               onMouseEnter={handleMouseEnter}
