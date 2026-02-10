@@ -30,6 +30,386 @@ const VerticalScrollingText = () => (
   </div>
 );
 
+// 3D Image Carousel Component with Global Mouse Tracking
+const Carousel3D = ({ setActivePage }) => {
+  const containerRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [globalMousePos, setGlobalMousePos] = useState({ x: 0, y: 0 });
+  const [isInCarousel, setIsInCarousel] = useState(false);
+  
+  const carouselItems = [
+    { image: "images/determ (1).png", title: "De>Terminal", page: "de-terminal" },
+    { image: "images/month.ly.png", title: "Month.ly", page: "monthly" },
+    { image: "images/graph (1).png", title: "Graphic Medicine", page: "graphic-med" },
+    { image: "images/spotify (1).png", title: "Spotify Wrapped", page: "spotify" },
+    { image: "images/studyhive.png", title: "GT Study Hive", page: "studyhive" },
+  ];
+
+  // Track mouse position relative to the carousel container
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setGlobalMousePos({ x: x * 3, y: y * 3 }); // Larger multiplier for bigger 3D span
+  };
+
+  const handleMouseLeave = () => {
+    setGlobalMousePos({ x: 0, y: 0 });
+    setIsInCarousel(false);
+  };
+
+  const goToSlide = (direction) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    
+    if (direction === 'next') {
+      setCurrentIndex((prev) => (prev + 1) % carouselItems.length);
+    } else {
+      setCurrentIndex((prev) => (prev - 1 + carouselItems.length) % carouselItems.length);
+    }
+    
+    setTimeout(() => setIsAnimating(false), 500);
+  };
+
+  // Calculate shine angle based on mouse position
+  const shineAngle = Math.atan2(globalMousePos.y, globalMousePos.x) * (180 / Math.PI) + 90;
+
+  const getSlideStyle = (index) => {
+    const total = carouselItems.length;
+    let diff = index - currentIndex;
+    
+    // Normalize diff for circular carousel
+    if (diff > total / 2) diff -= total;
+    if (diff < -total / 2) diff += total;
+    
+    const isActive = diff === 0;
+    
+    // Base positions
+    let baseTranslateX = 0;
+    let baseTranslateZ = -150;
+    let baseRotateY = 0;
+    let baseScale = 0.3;
+    let zIndex = 0;
+    let opacity = 0;
+    let filter = 'grayscale(100%) brightness(0.5)';
+    
+    if (isActive) {
+      baseTranslateX = 0;
+      baseTranslateZ = 60;
+      baseRotateY = 0;
+      baseScale = 1;
+      zIndex = 30;
+      opacity = 1;
+      filter = 'grayscale(0%) brightness(1)';
+    } else if (diff === -1) {
+      baseTranslateX = -75;
+      baseTranslateZ = -20;
+      baseRotateY = 35;
+      baseScale = 0.75;
+      zIndex = 20;
+      opacity = 0.8;
+      filter = 'grayscale(20%) brightness(0.9)';
+    } else if (diff === 1) {
+      baseTranslateX = 75;
+      baseTranslateZ = -20;
+      baseRotateY = -35;
+      baseScale = 0.75;
+      zIndex = 20;
+      opacity = 0.8;
+      filter = 'grayscale(20%) brightness(0.9)';
+    } else if (diff === -2 || diff === total - 2) {
+      baseTranslateX = -130;
+      baseTranslateZ = -80;
+      baseRotateY = 45;
+      baseScale = 0.55;
+      zIndex = 10;
+      opacity = 0.5;
+      filter = 'grayscale(50%) brightness(0.7)';
+    } else if (diff === 2 || diff === -(total - 2)) {
+      baseTranslateX = 130;
+      baseTranslateZ = -80;
+      baseRotateY = -45;
+      baseScale = 0.55;
+      zIndex = 10;
+      opacity = 0.5;
+      filter = 'grayscale(50%) brightness(0.7)';
+    }
+    
+    // Apply mouse-based 3D effect to ALL visible cards - BIGGER range
+    const mouseInfluence = isActive ? 1 : (Math.abs(diff) === 1 ? 0.6 : 0.35);
+    const rotateX = isInCarousel ? -globalMousePos.y * 20 * mouseInfluence : 0;
+    const rotateY = baseRotateY + (isInCarousel ? globalMousePos.x * 20 * mouseInfluence : 0);
+    const translateZ = baseTranslateZ + (isInCarousel && isActive ? 30 : 0);
+    const scale = baseScale + (isInCarousel && isActive ? 0.08 : 0);
+    
+    return {
+      transform: `translateX(${baseTranslateX}%) translateZ(${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`,
+      zIndex,
+      opacity,
+      filter,
+      transition: isInCarousel ? 'all 0.15s ease-out' : 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+    };
+  };
+
+  return (
+    <div 
+      ref={containerRef}
+      className="relative w-full h-72 sm:h-80 md:h-96" 
+      style={{ perspective: '1200px' }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsInCarousel(true)}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Dynamic ambient glow that follows mouse - BIGGER movement */}
+      <div 
+        className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-200"
+        style={{
+          transform: isInCarousel ? `translateX(${globalMousePos.x * 50}px) translateY(${globalMousePos.y * 50}px)` : 'none',
+        }}
+      >
+        <div 
+          className="w-[500px] h-[500px] rounded-full blur-3xl transition-all duration-300"
+          style={{
+            background: isInCarousel 
+              ? 'radial-gradient(circle, rgba(129, 105, 177, 0.35) 0%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(129, 105, 177, 0.1) 0%, transparent 70%)',
+          }}
+        />
+      </div>
+      
+      {/* Carousel Container */}
+      <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
+        {carouselItems.map((item, index) => {
+          const isActive = index === currentIndex;
+          const total = carouselItems.length;
+          let diff = index - currentIndex;
+          if (diff > total / 2) diff -= total;
+          if (diff < -total / 2) diff += total;
+          const isVisible = Math.abs(diff) <= 2;
+          
+          return (
+            <div
+              key={index}
+              className="absolute cursor-pointer"
+              style={{
+                ...getSlideStyle(index),
+                width: '300px',
+                height: '210px',
+              }}
+              onClick={() => {
+                if (isActive) {
+                  setActivePage(item.page);
+                } else if (diff === 1 || diff === -(total - 1)) {
+                  goToSlide('next');
+                } else if (diff === -1 || diff === total - 1) {
+                  goToSlide('prev');
+                }
+              }}
+            >
+              <div className="relative w-full h-full">
+                {/* Glow effect behind active card - BIGGER */}
+                {isActive && (
+                  <div
+                    className="absolute -inset-6 rounded-3xl blur-2xl transition-all duration-150"
+                    style={{
+                      background: 'radial-gradient(circle at center, rgba(129, 105, 177, 0.8), transparent 70%)',
+                      opacity: isInCarousel ? 1 : 0.4,
+                      transform: `translateZ(-50px) scale(1.4) translateX(${globalMousePos.x * 25}px) translateY(${globalMousePos.y * 25}px)`,
+                    }}
+                  />
+                )}
+                
+                {/* Main card */}
+                <div
+                  className="relative w-full h-full rounded-2xl overflow-hidden"
+                  style={{
+                    boxShadow: isActive 
+                      ? `0 35px 70px -15px rgba(129, 105, 177, ${isInCarousel ? 0.7 : 0.4}), 
+                         0 0 ${isInCarousel ? 60 : 30}px rgba(129, 105, 177, ${isInCarousel ? 0.5 : 0.2}),
+                         ${globalMousePos.x * 25}px ${globalMousePos.y * 25}px 50px rgba(0,0,0,0.35)`
+                      : '0 20px 40px -10px rgba(0, 0, 0, 0.3)',
+                    transition: 'box-shadow 0.15s ease-out',
+                  }}
+                >
+                  {/* Image with parallax effect - BIGGER movement */}
+                  <div 
+                    className="absolute inset-0"
+                    style={{
+                      transform: isVisible && isInCarousel
+                        ? `translateX(${globalMousePos.x * (isActive ? -18 : -10)}px) translateY(${globalMousePos.y * (isActive ? -18 : -10)}px) scale(${isActive ? 1.15 : 1.08})`
+                        : 'scale(1.02)',
+                      transition: isInCarousel ? 'transform 0.12s ease-out' : 'transform 0.4s ease-out',
+                    }}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* Dynamic shine effect - always visible when mouse is in carousel */}
+                  {isVisible && (
+                    <div
+                      className="absolute inset-0 pointer-events-none transition-opacity duration-150"
+                      style={{
+                        background: isInCarousel
+                          ? `linear-gradient(${shineAngle}deg, 
+                              transparent 0%, 
+                              rgba(255,255,255,0) 25%, 
+                              rgba(255,255,255,${isActive ? 0.45 : 0.2}) 50%, 
+                              rgba(255,255,255,0) 75%, 
+                              transparent 100%)`
+                          : 'transparent',
+                        opacity: isInCarousel ? 1 : 0,
+                      }}
+                    />
+                  )}
+                  
+                  {/* Edge highlight that follows mouse */}
+                  {isActive && isInCarousel && (
+                    <div
+                      className="absolute inset-0 pointer-events-none rounded-2xl"
+                      style={{
+                        background: `linear-gradient(${shineAngle + 90}deg, 
+                          rgba(255,255,255,0.2) 0%, 
+                          transparent 25%, 
+                          transparent 75%, 
+                          rgba(129, 105, 177, 0.25) 100%)`,
+                      }}
+                    />
+                  )}
+                  
+                  {/* Floating sparkles on active card - BIGGER movement */}
+                  {isActive && isInCarousel && (
+                    <>
+                      <div 
+                        className="absolute w-2.5 h-2.5 bg-white/80 rounded-full"
+                        style={{ 
+                          top: `${25 + globalMousePos.y * 20}%`, 
+                          left: `${15 + globalMousePos.x * 20}%`,
+                          boxShadow: '0 0 15px rgba(255,255,255,0.9)',
+                          animation: 'pulse 2s ease-in-out infinite',
+                        }} 
+                      />
+                      <div 
+                        className="absolute w-2 h-2 bg-purple-300/90 rounded-full"
+                        style={{ 
+                          top: `${75 - globalMousePos.y * 15}%`, 
+                          right: `${20 - globalMousePos.x * 15}%`,
+                          boxShadow: '0 0 12px rgba(196, 181, 253, 0.9)',
+                          animation: 'pulse 2.5s ease-in-out infinite 0.5s',
+                        }} 
+                      />
+                      <div 
+                        className="absolute w-1.5 h-1.5 bg-white/60 rounded-full"
+                        style={{ 
+                          bottom: `${30 + globalMousePos.y * 12}%`, 
+                          left: `${70 + globalMousePos.x * 12}%`,
+                          boxShadow: '0 0 10px rgba(255,255,255,0.7)',
+                          animation: 'pulse 1.8s ease-in-out infinite 0.3s',
+                        }} 
+                      />
+                    </>
+                  )}
+                  
+                  {/* Title overlay */}
+                  {isActive && (
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end justify-center pb-4 transition-opacity duration-300"
+                      style={{
+                        opacity: isInCarousel ? 1 : 0.7,
+                      }}
+                    >
+                      <div 
+                        className="text-center transition-transform duration-150"
+                        style={{
+                          transform: isInCarousel 
+                            ? `translateY(0) translateX(${globalMousePos.x * 12}px) translateY(${globalMousePos.y * 3}px)`
+                            : 'translateY(5px)',
+                        }}
+                      >
+                        <span className="text-white font-didact text-lg font-bold drop-shadow-lg block">
+                          {item.title}
+                        </span>
+                        <span className="text-purple-300 text-xs font-didact opacity-90">Click to explore ✦</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Inner glow border - BIGGER */}
+                  <div
+                    className="absolute inset-0 pointer-events-none rounded-2xl transition-all duration-150"
+                    style={{
+                      boxShadow: isActive && isInCarousel
+                        ? `inset 0 0 50px rgba(255,255,255,0.2), 
+                           inset ${-globalMousePos.x * 60}px ${-globalMousePos.y * 60}px 100px rgba(129, 105, 177, 0.2)`
+                        : 'none',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Navigation Arrows */}
+      <button
+        onClick={() => goToSlide('prev')}
+        className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-40 w-12 h-12 sm:w-14 sm:h-14 bg-white/90 hover:bg-white rounded-full shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-purple-500/30 group backdrop-blur-sm"
+      >
+        <svg className="w-6 h-6 text-gray-600 group-hover:text-[#8169B1] transition-all duration-300 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      
+      <button
+        onClick={() => goToSlide('next')}
+        className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-40 w-12 h-12 sm:w-14 sm:h-14 bg-white/90 hover:bg-white rounded-full shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-purple-500/30 group backdrop-blur-sm"
+      >
+        <svg className="w-6 h-6 text-gray-600 group-hover:text-[#8169B1] transition-all duration-300 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+      
+      {/* Dot Indicators */}
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+        {carouselItems.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              if (!isAnimating) {
+                setIsAnimating(true);
+                setCurrentIndex(index);
+                setTimeout(() => setIsAnimating(false), 500);
+              }
+            }}
+            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+              index === currentIndex 
+                ? 'bg-[#8169B1] scale-125' 
+                : 'bg-gray-300 hover:bg-gray-400'
+            }`}
+          />
+        ))}
+      </div>
+      
+      {/* Current project title below */}
+      <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center z-40">
+        <p className="text-[#8169B1] font-didact font-bold text-lg sm:text-xl">
+          {carouselItems[currentIndex].title}
+        </p>
+        <p className="text-gray-500 text-sm font-didact">Click to explore →</p>
+      </div>
+    </div>
+  );
+};
+
+Carousel3D.propTypes = {
+  setActivePage: PropTypes.func.isRequired
+};
 
 const projects = [
   {
@@ -38,41 +418,48 @@ const projects = [
     image: "images/month.ly.png",
     description: "Developed a full-stack menstrual health tracking application using React Native for cross-platform mobile development,ensuring consistent user experience across iOS and Android devices",
     borderColor: "border-gray-300",
-    liveUrl:"",
-    figmaUrl: "https://www.figma.com/design/AmKiLTvEP5VwuOkuNCWb8S/Month.ly?node-id=0-1&p=f&t=tbBgc1X75kGSMT33-0"
+    
+    figmaUrl: "https://www.figma.com/design/AmKiLTvEP5VwuOkuNCWb8S/Month.ly?node-id=0-1&p=f&t=tbBgc1X75kGSMT33-0",
+    page: "monthly"
   },
   {
-    id: 1,
+  id: 2,
+  title: "De>Terminal",
+  borderColor: "border-white-800",
+  image: "images/determ (2).png",
+  description: "Full-stack cryptocurrency trading platform with terminal-style interface. Designed comprehensive UI/UX components and built responsive applications using React, TypeScript, and Tailwind CSS.",
+  liveUrl: "https://www.determinal.app/",
+  page: "de-terminal"
+  },
+  
+  {
+    id: 3,
     title: "Graphic Medicen",
     image: "images/graph (1).png",
     description: "Collaborated with the website team to develop and launch the Graphic Medicine website as part of Georgia Tech's VIP program. Integrated Figma mockups into WordPress.",
     borderColor: "border-gray-300",
-    liveUrl: "https://sites.gatech.edu/graphicmedicinelab/"
-
-    
+    liveUrl: "https://sites.gatech.edu/graphicmedicinelab/",
+    page: "graphic-med"
   },
   {
-
-    id: 2,
+    id: 4,
     title: "Spotify Wrapped",
     image: "images/spotify (1).png",
     description: "Led frontend development for Spotify Wrapped. Created user experiences through Figma prototypes and content delivery using the Spotify API.",
     borderColor: "border-gray-300",
-    liveUrl:"https://kenzieelle4.wixsite.com/atl-eats-demo/detailed-description"
+    liveUrl:"https://kenzieelle4.wixsite.com/atl-eats-demo/detailed-description",
+    page: "spotify"
   },
   {
-    id: 1,
+    id: 5,
     title: "Broconomy",
     image: "images/brocon.png",
     description: "Worked on a Unity game which deals with concerns about climate change and human damages to the environment",
     borderColor: "border-gray-300",
     liveUrl: "https://navibhalla113.wixsite.com/broconomy"
-
-    
   },
-
   {
-    id: 3,
+    id: 6,
     title: "AtlantaEats",
     image: "images/atleats (1).png",
     description: "Developed a full-stack web application for exploring Atlanta restaurants, featuring Google Maps integration.",
@@ -80,15 +467,16 @@ const projects = [
     liveUrl:"https://kenzieelle4.wixsite.com/atl-eats-demo/copy-of-detailed-description"
   },
   {
-    id: 4,
+    id: 7,
     title: "GT Study Hive",
     image: "images/studyhive.png",
     description: "Led the UI/UX design of an interactive platform that connects Georgia Tech students for study groups, enhancing useability and engagement. ",
     borderColor: "border-gray-300" , 
-    liveUrl:"https://navibhalla113.wixsite.com/gt-study-hive"
+    liveUrl:"https://navibhalla113.wixsite.com/gt-study-hive",
+    page: "studyhive"
   },
   {
-    id: 6,
+    id: 8,
     title: "Sleep Tracker App",
     image: "images/niteapp.png",
     description: "Sleep tracker app mock up design for individuals who have struggles sleeping.",
@@ -96,7 +484,7 @@ const projects = [
     liveUrl:"https://www.figma.com/design/1L7fsGe3G5EQu5gxjZFGj5/Untitled?node-id=0-1&t=wt2iSIyVXyzMR5cB-1"
   },
   {
-    id: 5,
+    id: 9,
     title: "Cloud CTRL",
     image: "images/CC (1).png",
     description: "Designed a Cyber-Punk clothing brand as a group and was incharge of developing the mascot and billboard design. ",
@@ -143,7 +531,527 @@ const workExperiences = [
   }
 ];
 
+// Project Detail Pages
+const ProjectPageWrapper = ({ children, setActivePage }) => (
+  <div className="min-h-screen bg-black relative overflow-hidden">
+    {/* Back button */}
+    <button 
+      onClick={() => setActivePage('work')}
+      className="fixed top-6 left-6 z-50 bg-[#8169B1] text-white px-4 py-2 rounded-full font-didact hover:bg-purple-600 transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-lg"
+    >
+      <span>←</span> Back 
+    </button>
+    
+    {/* Decorative background blobs */}
+    <div className="absolute top-20 right-10 w-64 h-64 bg-purple-500/10 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] blur-3xl" />
+    <div className="absolute bottom-20 left-10 w-80 h-80 bg-purple-600/10 rounded-[30%_70%_70%_30%/30%_52%_48%_70%] blur-3xl" />
+    
+    <div className="container mx-auto px-6 py-20 relative z-10">
+      {children}
+    </div>
+  </div>
+);
 
+ProjectPageWrapper.propTypes = {
+  children: PropTypes.node.isRequired,
+  setActivePage: PropTypes.func.isRequired
+};
+
+// Frontend Carousel Component for De>Terminal
+const FrontendCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const images = [
+    { src: "images/DeterminalHomePage (1).png", alt: "Sign In Flow" },
+    { src: "images/carsolfrontendpt2.png", alt: "Sign In Flow" },
+    { src: "images/CrasolFronend.png", alt: "Dashboard UI" },
+    // Add more images here
+  ];
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  return (
+    <div className="relative mb-4">
+      {/* Carousel Container with fixed aspect ratio */}
+      <div className="relative w-full rounded-xl overflow-hidden border border-purple-500/20 bg-black/10">
+        <div className="relative w-full" style={{ paddingBottom: '56.25%' }}> {/* 16:9 aspect ratio */}
+          {/* Actual carousel images with crossfade transitions */}
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out ${
+                index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              }`}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          ))}
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={() => goToSlide((currentIndex - 1 + images.length) % images.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => goToSlide((currentIndex + 1) % images.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-300 backdrop-blur-sm z-20"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Image Label */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-20">
+            <p className="text-white font-didact text-center">{images[currentIndex].alt}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Dot Indicators */}
+      <div className="flex justify-center gap-2 mt-4">
+        {images.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`transition-all duration-300 rounded-full ${
+              index === currentIndex
+                ? 'w-8 h-3 bg-[#8169B1]'
+                : 'w-3 h-3 bg-gray-500 hover:bg-gray-400'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// De-Terminal Project Page
+const DeTerminalPage = ({ setActivePage }) => {
+  const [visibleSections, setVisibleSections] = useState(new Set());
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => new Set([...prev, entry.target.dataset.section]));
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }
+    );
+
+    const sections = document.querySelectorAll('[data-section]');
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+  <ProjectPageWrapper title="De>Terminal" setActivePage={setActivePage}>
+    <div className="max-w-5xl mx-auto">
+      {/* Hero Section */}
+      <div 
+        data-section="hero"
+        className={`text-center mb-16 transition-opacity duration-1500 ${
+          visibleSections.has('hero') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <h1 className="text-4xl md:text-6xl font-bold text-white font-didact mb-4">
+          De<span className="text-[#8169B1]">&gt;</span>Terminal
+        </h1>
+        <p className="text-purple-300 text-lg md:text-xl font-didact">
+          Full-Stack Internship • May 2025 - August 2025
+        </p>
+      </div>
+      
+      {/* Main Image */}
+      <div 
+        data-section="main-image"
+        className={`mb-16 rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20 transition-opacity duration-1500 ${
+          visibleSections.has('main-image') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <img 
+          src="images/DeterminalHomePage (1).png" 
+          alt="De>Terminal Project"
+          className="w-full h-auto object-cover"
+        />
+      </div>
+      
+      {/* Project Overview */}
+      <div 
+        data-section="overview"
+        className={`grid md:grid-cols-2 gap-12 mb-16 transition-opacity duration-1500 ${
+          visibleSections.has('overview') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <div>
+          <h2 className="text-2xl font-bold text-white font-didact mb-4 flex items-center gap-2">
+            <span className="text-[#8169B1]">✦</span> Overview
+          </h2>
+          <p className="text-gray-300 leading-relaxed font-didact">
+          De Terminal is an advanced cryptocurrency trading terminal built for Solana-based crypto traders. 
+          The tagline is &ldquo;The operating system for the trenches&rdquo; which is aimed at active traders who want powerful, customizable tools.
+          </p>
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-white font-didact mb-4 flex items-center gap-2">
+            <span className="text-[#8169B1]">✦</span> My Role
+          </h2>
+          <p className="text-gray-300 leading-relaxed font-didact">
+            Led the development of intuitive tabbed navigation systems and built responsive 
+            front-end applications using React, TypeScript, and Tailwind CSS, translating 
+            Figma prototypes into production-ready components.
+          </p>
+        </div>
+      </div>
+
+      {/* Problem & Solution Section */}
+      <div 
+        data-section="problem-solution"
+        className={`mb-16 transition-opacity duration-1500 ${
+          visibleSections.has('problem-solution') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <h2 className="text-2xl font-bold text-white font-didact mb-6 flex items-center gap-2">
+          <span className="text-[#8169B1]">✦</span> Problem & Solution
+        </h2>
+        <div className="bg-white/5 rounded-xl p-6 border border-purple-500/20">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-purple-300 mb-3">The Problem</h3>
+            <p className="text-gray-300 leading-relaxed font-didact">
+              Cryptocurrency traders needed a more intuitive and streamlined platform to access real-time market data, 
+              execute trades, and monitor their portfolios without switching between multiple tools.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-purple-300 mb-3">The Solution</h3>
+            <p className="text-gray-300 leading-relaxed font-didact">
+              Developed a unified terminal-style interface that combines trading tools, social feeds, 
+              and market analytics in one seamless experience, reducing complexity and improving workflow efficiency.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Design Process Section - Expanded */}
+      <div 
+        data-section="development-process"
+        className={`mb-16 transition-opacity duration-1500 ${
+          visibleSections.has('development-process') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <h2 className="text-2xl font-bold text-white font-didact mb-6 flex items-center gap-2">
+          <span className="text-[#8169B1]">✦</span> The Development Process
+        </h2>
+        
+        {/* Step 1: Design Process: Brand Identity Redesign & UI System Dev */}
+        <div className="mb-12 bg-white/5 rounded-xl p-6 md:p-8 border border-purple-500/20">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="text-[#8169B1] font-bold text-4xl md:text-5xl">01</div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">Design Process</h3>
+          </div>
+          
+          <ul className="text-gray-300 leading-relaxed mb-6 list-disc list-inside space-y-2">
+            <li>Redesigned and established the company&apos;s brand identity from the ground up, creating a cohesive visual language now adopted as the official brand standard. Developed comprehensive UI mockups in Figma focused on first-time user experiences which focused on reducing friction points in the user journey.</li>
+            <li>Built a complete component library and design system that streamlined developer handoff and ensured brand consistency across all development points. This systematic approach enabled the development team to implement designs faster and with greater accuracy, reducing back and forth revisions and accelerating product deployment.</li>
+
+          </ul>
+          
+          {/* Design Process Images */}
+          <div className="">
+            <div>
+              <a 
+                href="https://www.figma.com/design/w6Ph0GIgpRGpULOz5z9KpL/UI-Components-Library-%3EDeterminal?node-id=2869-1009&t=njzD01XudkFC0o5r-1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-xl overflow-hidden border border-purple-500/20 hover:border-purple-500/60 transition-all duration-300 cursor-pointer group"
+              >
+                <img 
+                  src="images/DesignDetermialpg.png" 
+                  alt="Design Process 1"
+                  className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-800"
+                />
+              </a>
+              <a 
+                href="https://www.figma.com/design/w6Ph0GIgpRGpULOz5z9KpL/UI-Components-Library-%3EDeterminal?node-id=2869-1009&t=njzD01XudkFC0o5r-1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 mt-3 text-purple-300 hover:text-purple-200 transition-colors duration-300 font-didact"
+              >
+                Click to view component library
+                <ExternalLink size={16} />
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Step 2: Frontend Development: Design --> Development*/}
+        <div className="mb-12 bg-white/5 rounded-xl p-6 md:p-8 border border-purple-500/20">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="text-[#8169B1] font-bold text-4xl md:text-5xl">02</div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">Frontend Development</h3>
+          </div>
+          
+          <ul className="text-gray-300 leading-relaxed mb-6 list-disc list-inside space-y-2">
+            <li>Translated design mockups into production ready code by building the complete landing page and sign-in flow using React and Tailwind CSS. Implemented the custom component library and brand identity system, ensuring adherence to design specifications while maintaining responsive functionality across all devices.</li>
+            <li>Developed reusable React components that aligned with the design system, enabling consistent UI patterns and faster feature development. Utilized Tailwind CSS for efficient styling that matched the brand&apos;s visual language while maintaining clean, maintainable code architecture.</li>
+
+          </ul>
+          
+          {/* Frontend Work Images - Carousel */}
+          <FrontendCarousel />
+        </div>
+
+        {/* Step 3: Backend Development:Twitter API & Real-Time Search */}
+        <div className="mb-12 bg-white/5 rounded-xl p-6 md:p-8 border border-purple-500/20">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="text-[#8169B1] font-bold text-4xl md:text-5xl">03</div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">Backend Development</h3>
+          </div>
+          
+          <ul className="text-gray-300 leading-relaxed mb-6 list-disc list-inside space-y-2">
+            <li>Integrated Twitter (X) OAuth 2.0 authentication, enabling users to securely log in with their Twitter accounts and providing seamless single sign-on functionality. Architected backend services to handle API authentication flows, token management, and session persistence.</li>
+            <li>Developed a real-time tweet search engine leveraging Twitter&apos;s API to fetch and filter content based on user-defined keywords. Built specifically for crypto market analysis, the system retrieves tweets from recent to historical timeframes, allowing users to track sentiment and discussions around specific cryptocurrencies (e.g., &ldquo;doge&rdquo;, &ldquo;bitcoin&rdquo;).</li>
+            <li>Implemented data processing pipelines to parse Twitter API responses, format tweet data, and structure it for frontend consumption. Ensured the retrieved content seamlessly integrated with the UI design system, maintaining brand consistency while displaying dynamic, real-time social media data.</li>
+
+          </ul>
+          {/* Backend Work Images */}
+          <div className="">
+            <div className="rounded-xl overflow-hidden border border-purple-500/20">
+              <img 
+                src="images/Backendcarsol.png" 
+                alt="Backend Work 1"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+
+          </div>
+          
+
+        </div>
+
+      </div>
+
+      {/* Architecture Section */}
+      <div 
+        data-section="architecture"
+        className={`mb-1 transition-opacity duration-1500 ${
+          visibleSections.has('architecture') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <h2 className="text-2xl font-bold text-white font-didact mb-6 flex items-center gap-2">
+          <span className="text-[#8169B1]">✦</span> System Architecture
+        </h2>
+        <p className="text-gray-300 leading-relaxed mb-6 font-didact">
+          The De&gt;Terminal platform is built on a scalable, modular architecture that seamlessly integrates 
+          frontend components, backend services, and external APIs to deliver a robust trading experience.
+        </p>
+        <div className="rounded-xl overflow-hidden border border-purple-500/20 bg-black p-4 flex justify-center">
+          <img 
+            src="images/Architecture.png" 
+            alt="System Architecture Diagram"
+            className="w-full md:w-3/4 lg:w-2/3 h-auto object-contain"
+          />
+        </div>
+      </div>
+      
+      {/* Tech Stack */}
+      <div 
+        data-section="tech-stack"
+        className={`mb-16 transition-opacity duration-1500 ${
+          visibleSections.has('tech-stack') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <h2 className="text-2xl font-bold text-white font-didact mb-6 flex items-center gap-2">
+          <span className="text-[#8169B1]">✦</span> Tech Stack
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          {['React', 'TypeScript', 'Tailwind CSS', 'Figma', 'Twitter API', 'REST APIs'].map((tech) => (
+            <span 
+              key={tech}
+              className="px-4 py-2 bg-[#8169B1]/20 text-purple-300 rounded-full font-didact text-sm border border-purple-500/30 hover:bg-[#8169B1]/40 transition-colors"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+      </div>
+      
+      {/* Key Achievements */}
+      <div 
+        data-section="achievements"
+        className={`mb-16 transition-opacity duration-1500 ${
+          visibleSections.has('achievements') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <h2 className="text-2xl font-bold text-white font-didact mb-6 flex items-center gap-2">
+          <span className="text-[#8169B1]">✦</span> Key Achievements
+        </h2>
+        <div className="space-y-4">
+          {[
+            "Designed and developed comprehensive UI/UX component library using Figma",
+            "Built responsive front-end applications with mobile-first responsive design principles",
+            "Integrated Twitter API to fetch and display real-time cryptocurrency data",
+            "Reduced user task completion time by 40% through streamlined UI architecture"
+          ].map((achievement, idx) => (
+            <div key={idx} className="flex items-start gap-4 p-4 bg-white/5 rounded-xl border border-purple-500/20 hover:border-purple-500/40 transition-colors">
+              <span className="text-[#8169B1] font-bold">{idx + 1}.</span>
+              <p className="text-gray-300 font-didact">{achievement}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Impact & Results Section */}
+      <div 
+        data-section="impact"
+        className={`mb-16 transition-opacity duration-1500 ${
+          visibleSections.has('impact') ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <h2 className="text-2xl font-bold text-white font-didact mb-6 flex items-center gap-2">
+          <span className="text-[#8169B1]">✦</span> Impact & Results
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-6 border border-purple-500/30 text-center">
+            <div className="text-4xl font-bold text-[#8169B1] mb-2">40%</div>
+            <p className="text-gray-300">Task completion time reduced</p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-6 border border-purple-500/30 text-center">
+            <div className="text-4xl font-bold text-[#8169B1] mb-2">100+</div>
+            <p className="text-gray-300">Components created</p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-6 border border-purple-500/30 text-center">
+            <div className="text-4xl font-bold text-[#8169B1] mb-2">5+</div>
+            <p className="text-gray-300">Pages designed</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* External Link */}
+      <div className="text-center">
+        <a 
+          href="https://www.determinal.app/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-[#8169B1] text-white px-8 py-3 rounded-full font-didact font-bold hover:bg-purple-600 transition-all duration-300 hover:scale-105 shadow-lg shadow-purple-500/30"
+        >
+          Visit De&gt;Terminal <ExternalLink size={18} />
+        </a>
+      </div>
+    </div>
+  </ProjectPageWrapper>
+  );
+};
+
+DeTerminalPage.propTypes = {
+  setActivePage: PropTypes.func.isRequired
+};
+
+// Generic Project Page Template (for other projects)
+const GenericProjectPage = ({ setActivePage, project }) => (
+  <ProjectPageWrapper title={project.title} setActivePage={setActivePage}>
+    <div className="max-w-5xl mx-auto">
+      <div className="text-center mb-16">
+        <h1 className="text-4xl md:text-6xl font-bold text-white font-didact mb-4">
+          {project.title}
+        </h1>
+        <p className="text-purple-300 text-lg md:text-xl font-didact">
+          {project.subtitle}
+        </p>
+      </div>
+      
+      <div className="mb-16 rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20">
+        <img 
+          src={project.image} 
+          alt={project.title}
+          className="w-full h-auto object-cover"
+        />
+      </div>
+      
+      <div className="mb-16">
+        <h2 className="text-2xl font-bold text-white font-didact mb-4 flex items-center gap-2">
+          <span className="text-[#8169B1]">✦</span> About
+        </h2>
+        <p className="text-gray-300 leading-relaxed font-didact text-lg">
+          {project.description}
+        </p>
+      </div>
+      
+      {project.liveUrl && (
+        <div className="text-center">
+          <a 
+            href={project.liveUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#8169B1] text-white px-8 py-3 rounded-full font-didact font-bold hover:bg-purple-600 transition-all duration-300 hover:scale-105 shadow-lg shadow-purple-500/30"
+          >
+            View Project <ExternalLink size={18} />
+          </a>
+        </div>
+      )}
+    </div>
+  </ProjectPageWrapper>
+);
+
+GenericProjectPage.propTypes = {
+  setActivePage: PropTypes.func.isRequired,
+  project: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    subtitle: PropTypes.string,
+    image: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    liveUrl: PropTypes.string
+  }).isRequired
+};
+
+// Project data for detail pages
+const projectDetails = {
+  'monthly': {
+    title: "Month.ly",
+    subtitle: "Full-Stack Health Application",
+    image: "images/month.ly.png",
+    description: "Developed a full-stack menstrual health tracking application using React Native for cross-platform mobile development, ensuring consistent user experience across iOS and Android devices. The app features intuitive cycle tracking, symptom logging, and predictive analytics.",
+    liveUrl: "",
+    figmaUrl: "https://www.figma.com/design/AmKiLTvEP5VwuOkuNCWb8S/Month.ly"
+  },
+  'graphic-med': {
+    title: "Graphic Medicine",
+    subtitle: "Georgia Tech VIP Program",
+    image: "images/graph (1).png",
+    description: "Collaborated with the website team to develop and launch the Graphic Medicine website as part of Georgia Tech's VIP program. Integrated Figma mockups into WordPress, creating an accessible platform for healthcare communication through visual storytelling.",
+    liveUrl: "https://sites.gatech.edu/graphicmedicinelab/"
+  },
+  'spotify': {
+    title: "Spotify Wrapped",
+    subtitle: "Frontend Development Project",
+    image: "images/spotify (1).png",
+    description: "Led frontend development for a Spotify Wrapped recreation. Created immersive user experiences through Figma prototypes and implemented dynamic content delivery using the Spotify API to showcase users' listening habits.",
+    liveUrl: "https://kenzieelle4.wixsite.com/atl-eats-demo/detailed-description"
+  },
+  'studyhive': {
+    title: "GT Study Hive",
+    subtitle: "UI/UX Design Project",
+    image: "images/studyhive.png",
+    description: "Led the UI/UX design of an interactive platform that connects Georgia Tech students for study groups, enhancing usability and engagement. Features include smart matching, scheduling integration, and collaborative tools.",
+    liveUrl: "https://navibhalla113.wixsite.com/gt-study-hive"
+  }
+};
 
 
 
@@ -151,7 +1059,7 @@ const workExperiences = [
 
  /*start of homenav ↓ */
 
-const HomeNavigation = ({ setActivePage }) => {
+const HomeNavigation = ({ setActivePage, setHoveredNav }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Add/remove body class when mobile menu opens/closes
@@ -198,9 +1106,24 @@ const HomeNavigation = ({ setActivePage }) => {
         <nav className="bg-[#8169B1] text-white p-2 flex justify-between items-center text-lg font-didact">
           <div className="text-xl font-bold ml-4">VB</div>
           <div className="flex font-bold  font-didact gap-6 text-xl mr-8">
-            <a onClick={() => setActivePage('work')} className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1">Work</a>
-            <a onClick={() => setActivePage('playground')} className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1">Playground</a>
-            <a onClick={() => setActivePage('resume')} className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1">Resume</a>
+            <a 
+              onClick={() => setActivePage('work')} 
+              onMouseEnter={() => setHoveredNav('work')}
+              onMouseLeave={() => setHoveredNav(null)}
+              className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1"
+            >Work</a>
+            <a 
+              onClick={() => setActivePage('playground')} 
+              onMouseEnter={() => setHoveredNav('playground')}
+              onMouseLeave={() => setHoveredNav(null)}
+              className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1"
+            >Playground</a>
+            <a 
+              onClick={() => setActivePage('resume')} 
+              onMouseEnter={() => setHoveredNav('resume')}
+              onMouseLeave={() => setHoveredNav(null)}
+              className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1"
+            >Resume</a>
           </div>
         </nav>
       </div>
@@ -209,13 +1132,15 @@ const HomeNavigation = ({ setActivePage }) => {
 };
 
 HomeNavigation.propTypes = {
-  setActivePage: PropTypes.func.isRequired
+  setActivePage: PropTypes.func.isRequired,
+  setHoveredNav: PropTypes.func.isRequired
 };
 
 
 
 // HomePage Component - Fixed to prevent scroll and fit content properly
-const HomePage = () => (
+const HomePage = ({ hoveredNav }) => {
+  return (
   <div className="min-h-screen flex flex-col lg:flex-row bg-[#E4E4E2] overflow-hidden">
     {/* Left side - About Me Section */}
     <div className="w-full lg:w-2/5 min-h-screen">
@@ -241,7 +1166,7 @@ const HomePage = () => (
           </div>
 
           {/* Desktop profile image - moved down more */}
-          <div className="hidden xl:block absolute bottom-[1rem] right-20 w-48 xl:w-60 h-auto">
+          <div className="hidden xl:block absolute bottom-[0.5rem] right-20 w-30 xl:w-60 h-auto">
             <img
               src="images/portpic.png"
               alt="port pic"
@@ -283,37 +1208,78 @@ const HomePage = () => (
       </div>
     </div>
 
-    {/* Right side */}
-    <div className="w-full lg:w-3/5 min-h-screen">
-      <div className="flex flex-col items-center bg-[#E4E4E2] justify-center p-4 sm:p-6 lg:p-8 h-full mt-8 lg:mt-12">
-        <style>{`
-          @keyframes float {
-            0%, 100% { transform: translateY(-3px); }
-            50% { transform: translateY(-8px); }
-          }
-          .floating-jellyfish {
-            animation: float 5s ease-in-out infinite;
-          }
-        `}</style>
-        
-        {/* Jellyfish Image */}
-        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mb-6">
-          <img
-            src="images/Jellyfishhehe.png"
-            alt="Jelly Image"
-            className="w-full h-auto object-contain floating-jellyfish"
-          />
-        </div>
-
-        {/* Text content - moved down */}
-        <div className="text-center px-4 sm:px-6 mt-4">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-black font-didact mb-1 sm:mb-2 leading-tight">
+    {/* Right side with background art */}
+    <div className="w-full lg:w-3/5 min-h-screen relative bg-[#D9D9D9]">
+      {/* Background Art Images - crossfade on nav hover */}
+      {/* Default homepage art - fades out when hovering nav */}
+      <div 
+        className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
+        style={{
+          backgroundImage: 'url(images/HomepageArt.png)',
+          backgroundPosition: '58% center',
+          backgroundSize: '81%',
+          opacity: hoveredNav ? 5 : 0.95,
+        }}
+      />
+      {/* Work page art */}
+      <div 
+        className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
+        style={{
+          backgroundImage: 'url(images/WorkPageArt.png)',
+          backgroundPosition: '58% center',
+          backgroundSize: '81%',
+          opacity: hoveredNav === 'work' ? 0.95 : 0,
+        }}
+      />
+      {/* Playground page art */}
+      <div 
+        className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
+        style={{
+          backgroundImage: 'url(images/PlaygroundPageArt.png)',
+          backgroundPosition: '58% center',
+          backgroundSize: '81%',
+          opacity: hoveredNav === 'playground' ? 0.95 : 0,
+        }}
+      />
+      {/* Resume page art */}
+      <div 
+        className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
+        style={{
+          backgroundImage: 'url(images/ResumePageArt.png)',
+          backgroundPosition: '58% center',
+          backgroundSize: '81%',
+          opacity: hoveredNav === 'resume' ? 0.95 : 0,
+        }}
+      />
+      
+      <div className="relative z-10 flex flex-col items-center bg-transparent justify-end p-4 sm:p-6 lg:p-8 h-full pb-8 lg:pb-12">
+          {/* Text content */}
+          <div className="text-center px-4 sm:px-6">
+            <h1 
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#8169B1] font-didact mb-2 sm:mb-3 leading-tight text-[#8771B4]"
+              style={{
+                WebkitTextStroke: '20px #D9D9D9',
+                paintOrder: 'stroke fill'
+              }}
+            >
             Vaishnavi Bhalla
           </h1>
-          <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-purple-800 mb-1 sm:mb-2">
+            <h2 
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-[#D9D9D9] mb-2 sm:mb-3"
+              style={{
+                WebkitTextStroke: '8px #8169B1',
+                paintOrder: 'stroke fill'
+              }}
+            >
             BS in Computational Media
           </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 leading-relaxed">
+            <p 
+              className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-[#D9D9D9] leading-relaxed"
+              style={{
+                WebkitTextStroke: '8px #8169B1',
+                paintOrder: 'stroke fill'
+              }}
+            >
             Concentration in Intelligence and Interactive Design
           </p>
         </div>
@@ -321,6 +1287,11 @@ const HomePage = () => (
     </div>
   </div>
 );
+};
+
+HomePage.propTypes = {
+  hoveredNav: PropTypes.string
+};
 
 const SideNavigation = ({ activePage, setActivePage }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -425,7 +1396,7 @@ SideNavigation.propTypes = {
 
  /*start of work/epx ↓ */
 
- const ProjectCard = ({ project, delay }) => {
+ const ProjectCard = ({ project, delay, setActivePage }) => {
   const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
@@ -435,6 +1406,12 @@ SideNavigation.propTypes = {
     
     return () => clearTimeout(timer);
   }, [delay]);
+
+  const handleCardClick = () => {
+    if (project.page) {
+      setActivePage(project.page);
+    }
+  };
   
   return (
     <div className={`w-full relative group transition-all duration-700 ease-out transform
@@ -455,10 +1432,23 @@ SideNavigation.propTypes = {
           </p>
           
           <div className="flex gap-2">
+            {project.page && (
+              <button
+                onClick={handleCardClick}
+                className="p-1 sm:p-1.5 bg-[#8169B1] text-white rounded-full hover:bg-purple-600 transition-colors duration-300 flex items-center justify-center"
+                title="View Details"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            )}
             <a
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="p-1 sm:p-1.5 bg-white text-black rounded-full hover:bg-gray-200 transition-colors duration-300"
             >
               <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -468,6 +1458,7 @@ SideNavigation.propTypes = {
                 href={project.figmaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="p-1 sm:p-1.5 bg-white text-black rounded-full hover:bg-gray-200 transition-colors duration-300"
               >
                 <Figma className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -486,9 +1477,11 @@ ProjectCard.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     liveUrl: PropTypes.string.isRequired,
-    figmaUrl: PropTypes.string
+    figmaUrl: PropTypes.string,
+    page: PropTypes.string
   }).isRequired,
-  delay: PropTypes.number.isRequired
+  delay: PropTypes.number.isRequired,
+  setActivePage: PropTypes.func.isRequired
 };
 
 const BackgroundTile = ({ index }) => {
@@ -587,12 +1580,13 @@ WorkExperienceItem.propTypes = {
     title: PropTypes.string.isRequired,
     period: PropTypes.string.isRequired,
     company: PropTypes.string.isRequired,
+    companyUrl: PropTypes.string,
     responsibilities: PropTypes.arrayOf(PropTypes.string).isRequired
   }).isRequired,
   delay: PropTypes.number.isRequired
 };
 
-const WorkPage = () => {
+const WorkPage = ({ setActivePage }) => {
   const [activeTab, setActiveTab] = useState('projects');
   const gridSize = 3;
   const totalTiles = gridSize * gridSize;
@@ -609,7 +1603,7 @@ const WorkPage = () => {
           ))}
         </div>
         
-        <div className="relative max-w-4xl mx-auto px-4 py-8">
+        <div className="relative max-w-5xl mx-auto px-4 py-8">
           <div className="bg-[#1B1B1B] p-4 sm:p-6 md:p-8 rounded-lg shadow-2xl relative z-10">
             <div className="flex mb-6">
               <div className="flex flex-col md:flex-row gap-1 border-b border-[#8169B1] w-full">
@@ -636,6 +1630,7 @@ const WorkPage = () => {
                     key={project.id}
                     project={project}
                     delay={200 * index}
+                    setActivePage={setActivePage}
                   />
                 ))}
               </div>
@@ -660,6 +1655,10 @@ const WorkPage = () => {
       <div className="bg-[#1B1B1B] w-full h-20"></div>
     </div>
   );
+};
+
+WorkPage.propTypes = {
+  setActivePage: PropTypes.func.isRequired
 };
 
  /*start of playground ↓ */
@@ -752,7 +1751,7 @@ const ImageSlideshow = () => {
   }, []);
 
   return (
-    <div className={`absolute transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`absolute transition-opacity duration-1500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {slideshowImages.map((image, index) => (
         <div
           key={image.id}
@@ -810,7 +1809,7 @@ const ImageSlideshow2 = () => {
   }, []);
 
   return (
-    <div className={`absolute transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`absolute transition-opacity duration-1500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {slideshowImages2.map((image, index) => (
         <div
           key={image.id}
@@ -1807,13 +2806,26 @@ const ResumePage = () => {
 // Main Portfolio Component
 const Portfolio = () => {
   const [activePage, setActivePage] = useState('home');
+  const [hoveredNav, setHoveredNav] = useState(null);
+
+  // Check if current page is a project detail page
+  const isProjectPage = ['de-terminal', 'monthly', 'graphic-med', 'spotify', 'studyhive'].includes(activePage);
 
   return (
     <div className="min-h-screen bg-white">
       {activePage === 'home' ? (
         <>
-          <HomeNavigation setActivePage={setActivePage} />
-          <HomePage />
+          <HomeNavigation setActivePage={setActivePage} setHoveredNav={setHoveredNav} />
+          <HomePage hoveredNav={hoveredNav} />
+        </>
+      ) : isProjectPage ? (
+        <>
+          {/* Project Detail Pages */}
+          {activePage === 'de-terminal' && <DeTerminalPage setActivePage={setActivePage} />}
+          {activePage === 'monthly' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['monthly']} />}
+          {activePage === 'graphic-med' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['graphic-med']} />}
+          {activePage === 'spotify' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['spotify']} />}
+          {activePage === 'studyhive' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['studyhive']} />}
         </>
       ) : (
         <>
@@ -1821,7 +2833,7 @@ const Portfolio = () => {
             activePage={activePage} 
             setActivePage={setActivePage}
           />
-          {activePage === 'work' && <WorkPage />}
+          {activePage === 'work' && <WorkPage setActivePage={setActivePage} />}
           {activePage === 'playground' && <PlaygroundPage />}
           {activePage === 'resume' && <ResumePage />}
         </>
