@@ -418,8 +418,7 @@ const projects = [
     image: "images/month.ly.png",
     description: "Developed a full-stack menstrual health tracking application using React Native for cross-platform mobile development,ensuring consistent user experience across iOS and Android devices",
     borderColor: "border-gray-300",
-    
-    figmaUrl: "https://www.figma.com/design/AmKiLTvEP5VwuOkuNCWb8S/Month.ly?node-id=0-1&p=f&t=tbBgc1X75kGSMT33-0",
+    liveUrl: "https://apps.apple.com/us/app/month-ly-period-tracker/id6758260411",
     page: "monthly"
   },
   {
@@ -497,36 +496,36 @@ const projects = [
 
 
 const workExperiences = [
-  
+  {
+    title: "Web Developer Intern",
+    company: "AH Webdesign",
+    period: "May 2026 - August 2026",
+    responsibilities: [
+      "Designed and shipped the backend services behind client facing chatbots on the Claude API, building a retrieval layer over each client's own documentation so answers stay grounded in approved content, and every request is scoped to that client's data",
+      "Built a Next.js and TypeScript site from scratch, factoring it into a typed, reusable component library with naming and structure clear enough for the team to extend in the future",
+      "Migrated live client sites, including ASG and Knias Medical, onto custom PHP themes built to match each client's approved designs exactly, cutting over production traffic on their launch dates",
+      "Translated what clients ask for into what they need, and built it start to finish across backend, frontend, and launch"
+    ]
+  },
   {
     title: "Full-Stack Intern",
     company: "De >Terminal",
     period: "May 2025 - August 2025",
-    companyUrl: "https://www.determinal.app/", // Add this property
+    companyUrl: "https://www.determinal.app/",
     responsibilities: [
-      "Designed and developed comprehensive UI/UX component library using Figma, creating landing pages, user dashboards and brand identity systems to ensure consistent design patterns across web applications",
-      "Built responsive front-end applications using React, TypeScript, and Tailwind CSS, translating Figma prototypes into production-ready components with mobile-first responsive design principles",
-      " Integrated APIs and external services including Twitter API to fetch and display real-time cryptocurrency data, developing custom React components for data visualization within terminal-style interfaces",
-      "Led development of intuitive tabbed navigation system implementing streamlined UI architecture that reduced user task completion time by enabling one-click access to trading tools, market data, and social feeds, reducing user task completion time by 40%"
+      "Wired up REST and Twitter/X APIs with Node.js to stream live crypto prices into React charts that update as the market moves",
+      "Consolidated markets, wallets, and individual token views into one tabbed React dashboard, replacing full page loads with components that swap in place so users switch views instantly",
+      "Turned Figma designs into working React, TypeScript, and Tailwind interfaces, matching the designer's spacing and interactions exactly and releasing alongside the design and product team"
     ]
   },
   {
-    title: "Teaching Assistant",
-    company: "Georgia Insitute of Technology",
+    title: "Teaching Assistant, Objects and Design",
+    company: "Georgia Institute of Technology",
     period: "Jan 2025 - May 2025",
     responsibilities: [
-      "Addressed students' lecture and homework questions, providing clarification and support",
-      "Guided students in developing full-stack web applications using Django, emphasizing best practices in front-end and back-end integration",
-      "Mentored students on debugging and optimizing their projects, focusing on scalability and performance",
-    ]
-  },
-  {
-    title: "CS Tutor",
-    company: "Georgia State University",
-    period: "Jan 2023 - Apr 2023",
-    responsibilities: [
-      "Worked with over 50 Programming students, explaining challenging concepts into simpler, more digestible explanations",
-      "Helped build a solid foundation for them to excel with their course work"
+      "Introduced industry testing practices to the course, teaching unit testing and CI on Django and REST projects so students validated their own code before submission",
+      "Mentored students through weekly office hours and individual debugging sessions, helping them reason through object-oriented design tradeoffs in their own code",
+      "Taught core object-oriented principles and API design, helping students write code that was structured rather than just functional"
     ]
   }
 ];
@@ -963,6 +962,310 @@ DeTerminalPage.propTypes = {
   setActivePage: PropTypes.func.isRequired
 };
 
+// Month.ly Case Study Page
+const MonthlyPage = ({ setActivePage }) => {
+  const problemCards = [
+    { title: 'Cold', body: 'Charts, storage, and clinical language for something people experience as a mood, not a metric.' },
+    { title: 'Leaky', body: 'Cycle data is sold, shared with advertisers, or parsed by insurers — none of it feels like it belongs to the user.' },
+    { title: 'Boring', body: 'Nothing about logging a symptom makes you want to open the app again tomorrow.' }
+  ];
+
+  const researchItems = [
+    { title: 'Competitive teardown', body: 'Walked the onboarding and privacy policies of the mainstream trackers. Almost all of them ask for more than they need on day one.' },
+    { title: 'Conversations with users', body: 'People described phases in terms of energy and mood — "crash out week," "main character week" — long before they used the medical names.' },
+    { title: 'Cycle-phase literature', body: 'Grounded the four phases and their typical symptom clusters so the playful copy still said something true.' },
+    { title: 'Data minimum', body: 'Worked backwards from the smallest record that still supports a prediction: dates, flow, symptoms — nothing else gets stored.' }
+  ];
+
+  const processSteps = [
+    { label: 'Sketch', color: '#D98CA0', caption: 'Hand-drawn before the app existed' },
+    { label: 'Token pass', color: '#B98CD9', caption: 'Five phases become five pastel cards' },
+    { label: 'Prototype / Build', color: '#7FB8C9', caption: 'Rebuilt as a working React Native screen' }
+  ];
+
+  const phones = [
+    { src: 'images/monthly-app-home.png', title: 'Home', body: 'One number, one phase, the moment the app opens.' },
+    { src: 'images/monthly-app-period-history.png', title: 'Period History', body: 'List and calendar views over the same records, edit anytime.' },
+    { src: 'images/monthly-app-cycle-analytics.png', title: 'Cycle Analytics', body: 'Predictions framed as a fortune, not a diagnosis.' }
+  ];
+
+  const phases = [
+    { name: 'Get Started', image: 'images/monthly-rookie-getstarted.png' },
+    { name: 'Menstrual', image: 'images/monthly-rookie-menstrual.png' },
+    { name: 'Follicular', image: 'images/monthly-rookie-follicular.png' },
+    { name: 'Ovulation', image: 'images/monthly-rookie-ovulation.png' },
+    { name: 'Luteal', image: 'images/monthly-rookie-luteal.png' }
+  ];
+
+  const techStack = [
+    { name: 'React Native', body: 'Front end. One codebase, native feel, fast iteration.' },
+    { name: 'Spring Boot', body: 'Auth and REST API, business logic and predictions.' },
+    { name: 'Railway', body: 'Backend deployment and database hosting.' },
+    { name: 'Apple Connect', body: 'TestFlight builds and App Store review.' }
+  ];
+
+  const challenges = [
+    { title: 'Predicting on thin data', body: 'A new user has logged one period, and averaging their cycle is confident to a fault. Every prediction surfaces a range instead of a single date.' },
+    { title: 'Playful but not careless', body: '"Crash out phase" is funny, a wrong prediction is not. The playful voice stays in the copy, never in the numbers.' },
+    { title: 'Hand-drawn art at 3x', body: 'Rookie’s line work falls apart when it’s scaled up or reproduced programmatically. Each state is its own drawn asset instead of being auto-generated.' }
+  ];
+
+  const nextSteps = [
+    { title: 'On-device history', body: 'Cache period history locally first, sync when connected — no phase gated on a network call.' },
+    { title: 'More Rookie', body: 'Sub-phase states for spotting and mid-cycle spikes, differentiating day by day within a phase.' },
+    { title: 'Android', body: 'The React Native codebase is most of the way there — native modules are the last mile.' }
+  ];
+
+  const sketches = [
+    { src: 'images/monthly-sketch-4.jpg', rotate: -2, mt: 0 },
+    { src: 'images/monthly-sketch-1.jpg', rotate: 3, mt: 8 },
+    { src: 'images/monthly-sketch-7.jpg', rotate: 2, mt: 0 },
+    { src: 'images/monthly-sketch-6.jpg', rotate: -3, mt: 12 },
+    { src: 'images/monthly-sketch-2.jpg', rotate: -1, mt: 0 },
+    { src: 'images/monthly-sketch-3.jpg', rotate: 2, mt: 6 }
+  ];
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#8B7C9C' }}>
+      <button
+        onClick={() => setActivePage('work')}
+        className="fixed top-6 left-6 z-50 bg-[#2A2438] text-white px-4 py-2 rounded-full font-didact hover:bg-[#3a3350] transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-lg"
+      >
+        <span>←</span> Back
+      </button>
+
+      <div className="max-w-4xl mx-auto px-6 py-20 md:py-24">
+        {/* Hero */}
+        <div className="mb-20">
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-3xl md:text-5xl font-bold font-didact italic" style={{ color: '#F7F1E8' }}>
+              Month.ly
+            </span>
+            <img src="images/monthly-logo.png" alt="Month.ly logo" className="h-16 md:h-24 w-auto" />
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold font-didact leading-tight mb-6" style={{ color: '#F7F1E8' }}>
+            A period tracker that isn&apos;t a medical chart.
+          </h1>
+          <p className="font-didact leading-relaxed mb-8 max-w-xl" style={{ color: '#E4DCEE' }}>
+            Month.ly turns your cycle into five illustrated phases of one character, Rookie.
+            React Native on the front, Spring Boot on the back, and no data sold to anybody.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {['New project', 'Design + dev work', 'React Native · Spring Boot', 'Railway · Apple Connect'].map((tag) => (
+              <span
+                key={tag}
+                className="px-4 py-2 rounded-full font-didact text-sm"
+                style={{ backgroundColor: '#F7F1E8', color: '#2A2438' }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* 01 The Problem */}
+        <div className="mb-20">
+          <p className="font-didact text-base md:text-lg font-bold tracking-wide uppercase mb-3" style={{ color: '#F3DCEA' }}>01 &middot; The Problem</p>
+          <h2 className="text-2xl md:text-3xl font-bold font-didact leading-snug mb-8" style={{ color: '#F7F1E8' }}>
+            Period tracking apps are clinical and they sell/share private data that does not feel safe.
+          </h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {problemCards.map((card) => (
+              <div key={card.title} className="rounded-2xl p-6" style={{ backgroundColor: '#F7F1E8' }}>
+                <h3 className="font-bold font-didact mb-2" style={{ color: '#2A2438' }}>{card.title}</h3>
+                <p className="font-didact text-sm leading-relaxed" style={{ color: '#5C5468' }}>{card.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 02 Research */}
+        <div className="mb-20">
+          <p className="font-didact text-base md:text-lg font-bold tracking-wide uppercase mb-3" style={{ color: '#F3DCEA' }}>02 &middot; Research</p>
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>What I looked at</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {researchItems.map((item, idx) => (
+              <div key={item.title} className="rounded-2xl p-6 flex gap-4" style={{ backgroundColor: '#F7F1E8' }}>
+                <div
+                  className="flex items-center justify-center rounded-full font-bold font-didact text-sm shrink-0 w-7 h-7"
+                  style={{ backgroundColor: '#EADDF3', color: '#6D5D82' }}
+                >
+                  {idx + 1}
+                </div>
+                <div>
+                  <h4 className="font-bold font-didact mb-1" style={{ color: '#2A2438' }}>{item.title}</h4>
+                  <p className="font-didact text-sm leading-relaxed" style={{ color: '#5C5468' }}>{item.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 03 Design Process */}
+        <div className="mb-20">
+          <p className="font-didact text-base md:text-lg font-bold tracking-wide uppercase mb-3" style={{ color: '#F3DCEA' }}>03 &middot; Design Process</p>
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-4" style={{ color: '#F7F1E8' }}>
+            From cream paper to a character you collect
+          </h2>
+          <p className="font-didact leading-relaxed mb-10 max-w-2xl" style={{ color: '#E4DCEE' }}>
+            The first direction was a warm cream journal: cream backgrounds, dusty plum headlines. It solved
+            &quot;not clinical&quot; but not &quot;come back tomorrow.&quot; The second pass gave every phase its own
+            hue and drew Rookie five times over — the app became something to check on, not just fill in.
+          </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {processSteps.map((step) => (
+              <div key={step.label}>
+                <div className="h-1 w-10 rounded-full mb-3" style={{ backgroundColor: step.color }} />
+                <p className="font-bold font-didact mb-1" style={{ color: '#F7F1E8' }}>{step.label}</p>
+                <p className="font-didact text-sm" style={{ color: '#E4DCEE' }}>{step.caption}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Three taps to the answer */}
+        <div className="mb-20">
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-10" style={{ color: '#F7F1E8' }}>
+            Three taps to the answer
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {phones.map((screen) => (
+              <div key={screen.title}>
+                <div className="rounded-[2rem] overflow-hidden mb-4 shadow-xl">
+                  <img src={screen.src} alt={screen.title} className="w-full h-auto" />
+                </div>
+                <p className="font-bold font-didact text-sm mb-1" style={{ color: '#F7F1E8' }}>{screen.title}</p>
+                <p className="font-didact text-xs leading-relaxed" style={{ color: '#E4DCEE' }}>{screen.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Rookie transforms by your energy */}
+        <div className="mb-20">
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-4" style={{ color: '#F7F1E8' }}>
+            Rookie transforms by your energy
+          </h2>
+          <p className="font-didact leading-relaxed mb-8 max-w-2xl" style={{ color: '#E4DCEE' }}>
+            Each phase is a card: a colour, a PMS score, and a phase power written the way people actually talk
+            about it. Log a period and the card changes — the reward for tracking is finding out which Rookie you get.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {phases.map((phase) => (
+              <div key={phase.name}>
+                <div className="rounded-xl overflow-hidden shadow-lg mb-2">
+                  <img src={phase.image} alt={phase.name} className="w-full h-auto" />
+                </div>
+                <p className="font-didact text-xs text-center" style={{ color: '#F7F1E8' }}>{phase.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* How it fits together */}
+        <div className="mb-20">
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
+            How it fits together
+          </h2>
+          <div className="rounded-2xl p-6 md:p-8" style={{ backgroundColor: '#6D5D82' }}>
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              {[
+                { name: 'React Native', body: 'iOS app, screens, phase timeline, tap-to-reveal predictions.' },
+                { name: 'Spring Boot', body: 'REST controllers, auth, cycle-prediction service.' },
+                { name: 'Database', body: 'Users, period records, symptom logs, Rookie collection state.' }
+              ].map((box) => (
+                <div key={box.name} className="rounded-xl p-4" style={{ backgroundColor: '#F7F1E8' }}>
+                  <p className="font-bold font-didact text-sm mb-1" style={{ color: '#2A2438' }}>{box.name}</p>
+                  <p className="font-didact text-xs leading-relaxed" style={{ color: '#5C5468' }}>{box.body}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid md:grid-cols-2 gap-4 text-center">
+              <p className="font-didact text-xs" style={{ color: '#E8DFF0' }}>
+                <span className="font-bold">Railway</span> — hosts the Spring Boot service and the database
+              </p>
+              <p className="font-didact text-xs" style={{ color: '#E8DFF0' }}>
+                <span className="font-bold">Apple Connect</span> — builds and reviews the React Native client
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* What I built it with */}
+        <div className="mb-20">
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
+            What I built it with
+          </h2>
+          <div className="grid md:grid-cols-4 gap-4">
+            {techStack.map((tech) => (
+              <div key={tech.name} className="rounded-2xl p-5" style={{ backgroundColor: '#F7F1E8' }}>
+                <p className="font-bold font-didact text-sm mb-2" style={{ color: '#2A2438' }}>{tech.name}</p>
+                <p className="font-didact text-xs leading-relaxed" style={{ color: '#5C5468' }}>{tech.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Harder than expected */}
+        <div className="mb-20">
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
+            Three things that were harder than expected
+          </h2>
+          <div className="space-y-3">
+            {challenges.map((item) => (
+              <div key={item.title} className="rounded-2xl p-5 md:flex md:items-baseline md:gap-6" style={{ backgroundColor: '#F7F1E8' }}>
+                <h3 className="font-bold font-didact text-sm mb-1 md:mb-0 md:w-1/4 shrink-0" style={{ color: '#2A2438' }}>{item.title}</h3>
+                <p className="font-didact text-sm leading-relaxed" style={{ color: '#5C5468' }}>{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Rookie Initial Sketches Playground */}
+        <div className="mb-20">
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-4" style={{ color: '#F7F1E8' }}>
+            Rookie Initial Sketches Playground
+          </h2>
+          <p className="font-didact leading-relaxed mb-8 max-w-2xl" style={{ color: '#E4DCEE' }}>
+            My favorite part of this project was designing a mascot that felt friendly and playful, so users
+            could actually enjoy checking in on their cycle instead of dreading it.
+          </p>
+          <div className="columns-2 md:columns-3 gap-4">
+            {sketches.map((sketch) => (
+              <div
+                key={sketch.src}
+                className="mb-4 break-inside-avoid transition-transform duration-300 hover:rotate-0 hover:scale-105"
+                style={{ transform: `rotate(${sketch.rotate}deg)`, marginTop: sketch.mt }}
+              >
+                <img src={sketch.src} alt="Rookie sketch" className="w-full h-auto rounded-lg shadow-xl" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* What I'd do next */}
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
+            What I&apos;d do next
+          </h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {nextSteps.map((step) => (
+              <div key={step.title} className="rounded-2xl p-6" style={{ backgroundColor: '#D9BFC7' }}>
+                <h3 className="font-bold font-didact text-sm mb-2" style={{ color: '#2A2438' }}>{step.title}</h3>
+                <p className="font-didact text-xs leading-relaxed" style={{ color: '#5C4F5C' }}>{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+MonthlyPage.propTypes = {
+  setActivePage: PropTypes.func.isRequired
+};
+
 // Generic Project Page Template (for other projects)
 const GenericProjectPage = ({ setActivePage, project }) => (
   <ProjectPageWrapper title={project.title} setActivePage={setActivePage}>
@@ -1027,8 +1330,7 @@ const projectDetails = {
     subtitle: "Full-Stack Health Application",
     image: "images/month.ly.png",
     description: "Developed a full-stack menstrual health tracking application using React Native for cross-platform mobile development, ensuring consistent user experience across iOS and Android devices. The app features intuitive cycle tracking, symptom logging, and predictive analytics.",
-    liveUrl: "",
-    figmaUrl: "https://www.figma.com/design/AmKiLTvEP5VwuOkuNCWb8S/Month.ly"
+    liveUrl: "https://apps.apple.com/us/app/month-ly-period-tracker/id6758260411"
   },
   'graphic-med': {
     title: "Graphic Medicine",
@@ -1432,7 +1734,7 @@ SideNavigation.propTypes = {
           </p>
           
           <div className="flex gap-2">
-            {project.page && (
+            {(project.page === 'monthly' || project.page === 'de-terminal') && (
               <button
                 onClick={handleCardClick}
                 className="p-1 sm:p-1.5 bg-[#8169B1] text-white rounded-full hover:bg-purple-600 transition-colors duration-300 flex items-center justify-center"
@@ -2760,7 +3062,7 @@ const ResumePage = () => {
           {/* Simple purple text link with hover detection */}
           <div className="relative group">
             <a 
-              href="images/VB_Resume_2025.pdf"
+              href="images/VB_Resume_2026.pdf"
               target="_blank"
               rel="noopener noreferrer"
               onMouseEnter={handleMouseEnter}
@@ -2822,7 +3124,7 @@ const Portfolio = () => {
         <>
           {/* Project Detail Pages */}
           {activePage === 'de-terminal' && <DeTerminalPage setActivePage={setActivePage} />}
-          {activePage === 'monthly' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['monthly']} />}
+          {activePage === 'monthly' && <MonthlyPage setActivePage={setActivePage} />}
           {activePage === 'graphic-med' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['graphic-med']} />}
           {activePage === 'spotify' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['spotify']} />}
           {activePage === 'studyhive' && <GenericProjectPage setActivePage={setActivePage} project={projectDetails['studyhive']} />}
