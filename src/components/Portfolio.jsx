@@ -1034,6 +1034,11 @@ const MonthlyPage = ({ setActivePage }) => {
         <span>←</span> Back
       </button>
 
+      {/* Banner */}
+      <div className="w-full h-40 sm:h-52 md:h-64 overflow-hidden shadow-xl">
+        <img src="images/monthly-banner.png" alt="Rookie character sheet" className="w-full h-full object-cover" style={{ objectPosition: 'center 78%' }} />
+      </div>
+
       <div className="max-w-4xl mx-auto px-6 py-20 md:py-24">
         {/* Hero */}
         <div className="mb-20">
