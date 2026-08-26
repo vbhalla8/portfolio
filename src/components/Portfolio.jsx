@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Figma, Linkedin, Mail, Menu, X, ExternalLink, Github } from 'lucide-react';
+import { Figma, Linkedin, Mail, Menu, X, ExternalLink, Github, Sun, Moon } from 'lucide-react';
 
 const VerticalScrollingText = () => (
   <div className="absolute right-0 top-0 bottom-0 w:[100rem] bg-[#8169B1] overflow-hidden md:w-12">
@@ -1408,20 +1408,20 @@ const HomeNavigation = ({ setActivePage, setHoveredNav }) => {
         <nav className="bg-[#8169B1] text-white p-2 flex justify-between items-center text-lg font-didact">
           <div className="text-xl font-bold ml-4">VB</div>
           <div className="flex font-bold  font-didact gap-6 text-xl mr-8">
-            <a 
-              onClick={() => setActivePage('work')} 
+            <a
+              onClick={() => { setActivePage('work'); setHoveredNav(null); }}
               onMouseEnter={() => setHoveredNav('work')}
               onMouseLeave={() => setHoveredNav(null)}
               className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1"
             >Work</a>
-            <a 
-              onClick={() => setActivePage('playground')} 
+            <a
+              onClick={() => { setActivePage('playground'); setHoveredNav(null); }}
               onMouseEnter={() => setHoveredNav('playground')}
               onMouseLeave={() => setHoveredNav(null)}
               className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1"
             >Playground</a>
-            <a 
-              onClick={() => setActivePage('resume')} 
+            <a
+              onClick={() => { setActivePage('resume'); setHoveredNav(null); }}
               onMouseEnter={() => setHoveredNav('resume')}
               onMouseLeave={() => setHoveredNav(null)}
               className="cursor-pointer hover:text-purple-200 transform transition-transform duration-300 hover:-translate-y-1"
@@ -1441,9 +1441,28 @@ HomeNavigation.propTypes = {
 
 
 // HomePage Component - Fixed to prevent scroll and fit content properly
-const HomePage = ({ hoveredNav }) => {
+const HomePage = ({ hoveredNav, isDarkMode, setIsDarkMode }) => {
+  const outerBg = isDarkMode ? '#1B1B1B' : '#E4E4E2';
+  const rightBg = isDarkMode ? '#1B1B1B' : '#D9D9D9';
+  const strokeMatchBg = isDarkMode ? '#1B1B1B' : '#D9D9D9';
+  const fillMatchBg = isDarkMode ? '#1B1B1B' : '#D9D9D9';
+  const homeArt = isDarkMode ? 'images/HomepageArtNew.png' : 'images/HomepageArt.png';
+  const workArt = isDarkMode ? 'images/WorkPageArtNew4.png' : 'images/WorkPageArt.png';
+  const playgroundArt = isDarkMode ? 'images/PlaygroundPageArtNew2.png' : 'images/PlaygroundPageArt.png';
+  const resumeArt = isDarkMode ? 'images/ResumePageArtNew2.png' : 'images/ResumePageArt.png';
+
   return (
-  <div className="min-h-screen flex flex-col lg:flex-row bg-[#E4E4E2] overflow-hidden">
+  <div className="min-h-screen flex flex-col lg:flex-row overflow-hidden" style={{ backgroundColor: outerBg }}>
+    {/* Mode toggle */}
+    <button
+      onClick={() => setIsDarkMode((prev) => !prev)}
+      className="fixed bottom-4 right-4 z-50 bg-[#8169B1] text-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-purple-600 transition-all duration-300 hover:scale-110 flex items-center justify-center"
+      aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to night mode'}
+      title={isDarkMode ? 'Switch to light mode' : 'Switch to night mode'}
+    >
+      {isDarkMode ? <Sun className="w-5 h-5 sm:w-6 sm:h-6" /> : <Moon className="w-5 h-5 sm:w-6 sm:h-6" />}
+    </button>
+
     {/* Left side - About Me Section */}
     <div className="w-full lg:w-2/5 min-h-screen">
       <div className="bg-[#1B1B1B] h-full relative">
@@ -1511,73 +1530,75 @@ const HomePage = ({ hoveredNav }) => {
     </div>
 
     {/* Right side with background art */}
-    <div className="w-full lg:w-3/5 min-h-screen relative bg-[#D9D9D9]">
+    <div className="w-full lg:w-3/5 min-h-screen relative" style={{ backgroundColor: rightBg }}>
       {/* Background Art Images - crossfade on nav hover */}
       {/* Default homepage art - fades out when hovering nav */}
-      <div 
+      <div
         className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
         style={{
-          backgroundImage: 'url(images/HomepageArt.png)',
+          backgroundImage: `url(${homeArt})`,
           backgroundPosition: '58% center',
           backgroundSize: '81%',
-          opacity: hoveredNav ? 5 : 0.95,
+          opacity: hoveredNav ? 0 : 1,
         }}
       />
       {/* Work page art */}
-      <div 
+      <div
         className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
         style={{
-          backgroundImage: 'url(images/WorkPageArt.png)',
-          backgroundPosition: '58% center',
-          backgroundSize: '81%',
-          opacity: hoveredNav === 'work' ? 0.95 : 0,
+          backgroundImage: `url(${workArt})`,
+          backgroundPosition: isDarkMode ? '54% 46%' : '58% center',
+          backgroundSize: isDarkMode ? '82%' : '81%',
+          opacity: hoveredNav === 'work' ? 1 : 0,
         }}
       />
       {/* Playground page art */}
-      <div 
+      <div
         className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
         style={{
-          backgroundImage: 'url(images/PlaygroundPageArt.png)',
+          backgroundImage: `url(${playgroundArt})`,
           backgroundPosition: '58% center',
           backgroundSize: '81%',
-          opacity: hoveredNav === 'playground' ? 0.95 : 0,
+          opacity: hoveredNav === 'playground' ? 1: 0,
         }}
       />
       {/* Resume page art */}
-      <div 
+      <div
         className="absolute inset-0 bg-no-repeat pointer-events-none transition-opacity duration-700 ease-in-out"
         style={{
-          backgroundImage: 'url(images/ResumePageArt.png)',
+          backgroundImage: `url(${resumeArt})`,
           backgroundPosition: '58% center',
           backgroundSize: '81%',
-          opacity: hoveredNav === 'resume' ? 0.95 : 0,
+          opacity: hoveredNav === 'resume' ? 1 : 0,
         }}
       />
       
       <div className="relative z-10 flex flex-col items-center bg-transparent justify-end p-4 sm:p-6 lg:p-8 h-full pb-8 lg:pb-12">
           {/* Text content */}
           <div className="text-center px-4 sm:px-6">
-            <h1 
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#8169B1] font-didact mb-2 sm:mb-3 leading-tight text-[#8771B4]"
+            <h1
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#8771B4] font-didact mb-2 sm:mb-3 leading-tight"
               style={{
-                WebkitTextStroke: '20px #D9D9D9',
+                WebkitTextStroke: `20px ${strokeMatchBg}`,
                 paintOrder: 'stroke fill'
               }}
             >
             Vaishnavi Bhalla
           </h1>
-            <h2 
-              className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-[#D9D9D9] mb-2 sm:mb-3"
+            <h2
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl mb-2 sm:mb-3"
               style={{
+                color: fillMatchBg,
                 WebkitTextStroke: '8px #8169B1',
                 paintOrder: 'stroke fill'
               }}
             >
             BS in Computational Media
           </h2>
-            <p 
-              className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-[#D9D9D9] leading-relaxed"
+            <p
+              className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl leading-relaxed"
               style={{
+                color: fillMatchBg,
                 WebkitTextStroke: '8px #8169B1',
                 paintOrder: 'stroke fill'
               }}
@@ -1592,7 +1613,9 @@ const HomePage = ({ hoveredNav }) => {
 };
 
 HomePage.propTypes = {
-  hoveredNav: PropTypes.string
+  hoveredNav: PropTypes.string,
+  isDarkMode: PropTypes.bool.isRequired,
+  setIsDarkMode: PropTypes.func.isRequired
 };
 
 const SideNavigation = ({ activePage, setActivePage }) => {
@@ -3109,6 +3132,7 @@ const ResumePage = () => {
 const Portfolio = () => {
   const [activePage, setActivePage] = useState('home');
   const [hoveredNav, setHoveredNav] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Check if current page is a project detail page
   const isProjectPage = ['de-terminal', 'monthly', 'graphic-med', 'spotify', 'studyhive'].includes(activePage);
@@ -3118,7 +3142,7 @@ const Portfolio = () => {
       {activePage === 'home' ? (
         <>
           <HomeNavigation setActivePage={setActivePage} setHoveredNav={setHoveredNav} />
-          <HomePage hoveredNav={hoveredNav} />
+          <HomePage hoveredNav={hoveredNav} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
         </>
       ) : isProjectPage ? (
         <>
