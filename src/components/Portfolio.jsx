@@ -1508,7 +1508,7 @@ const HomePage = ({ hoveredNav, isDarkMode, setIsDarkMode }) => {
 
             <div className="flex flex-row lg:flex-col justify-center lg:justify-start lg:ml-20 gap-3 sm:gap-4 lg:gap-6">
               <a
-                href="https://github.com/vbhalla8"
+                href="https://github.com/Navibhalla101"
                 className="bg-white rounded-full p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 flex items-center justify-center hover:bg-[#8169B1] transition-all transform hover:-translate-y-2 duration-300 ease-in-out"
               >
                 <Github className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
