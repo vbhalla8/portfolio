@@ -962,6 +962,171 @@ DeTerminalPage.propTypes = {
   setActivePage: PropTypes.func.isRequired
 };
 
+// Month.ly palette, sampled from the Rookie artwork
+const MONTHLY = {
+  bg: '#685776',
+  surface: '#57475F',
+  cream: '#F7F1E8',
+  ink: '#2F2438',
+  inkSoft: '#5C5468',
+  body: '#E9E1F0',
+  muted: '#C9BBD6',
+  green: '#A3D17A',
+  blue: '#9BB9D6',
+  pink: '#D584A8',
+  red: '#C9655A'
+};
+
+const MONTHLY_ACCENTS = [MONTHLY.green, MONTHLY.blue, MONTHLY.pink, MONTHLY.red];
+
+// Plays an entrance once the element scrolls into view. The springy easing
+// overshoots slightly so things "land" instead of just sliding in.
+const MONTHLY_REVEAL_FROM = {
+  up: 'translateY(48px)',
+  left: 'translateX(-56px)',
+  right: 'translateX(56px)',
+  pop: 'translateY(32px) scale(0.85)'
+};
+
+const MonthlyReveal = ({ children, from = 'up', tilt = 0, delay = 0, className = '', style }) => {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        ...style,
+        opacity: shown ? 1 : 0,
+        transform: shown ? 'none' : `${MONTHLY_REVEAL_FROM[from]} rotate(${tilt}deg)`,
+        transition: `opacity 700ms ease-out ${delay}ms, transform 900ms cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms`,
+        willChange: 'opacity, transform'
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+MonthlyReveal.propTypes = {
+  children: PropTypes.node,
+  from: PropTypes.oneOf(['up', 'left', 'right', 'pop']),
+  tilt: PropTypes.number,
+  delay: PropTypes.number,
+  className: PropTypes.string,
+  style: PropTypes.object
+};
+
+// Gap between items that animate in as a group
+const STAGGER_MS = 120;
+
+const MonthlySection = ({ label, title, intro, children }) => (
+  <section className="py-20 md:py-28">
+    <div className="mb-10 md:mb-14 max-w-3xl">
+      {label && (
+        <MonthlyReveal from="left">
+          <p className="font-didact text-sm md:text-base uppercase tracking-[0.2em] mb-3" style={{ color: MONTHLY.muted }}>
+            {label}
+          </p>
+        </MonthlyReveal>
+      )}
+      <MonthlyReveal delay={80}>
+        <h2 className="font-hand text-4xl md:text-6xl leading-tight text-white">{title}</h2>
+      </MonthlyReveal>
+      {intro && (
+        <MonthlyReveal delay={160}>
+          <p className="font-didact text-lg md:text-xl leading-relaxed mt-5" style={{ color: MONTHLY.body }}>
+            {intro}
+          </p>
+        </MonthlyReveal>
+      )}
+    </div>
+    {children}
+  </section>
+);
+
+MonthlySection.propTypes = {
+  label: PropTypes.string,
+  title: PropTypes.node.isRequired,
+  intro: PropTypes.node,
+  children: PropTypes.node
+};
+
+const MonthlyCard = ({ accent, title, children }) => (
+  <div
+    className="rounded-2xl p-7 h-full transition-transform duration-300 hover:-translate-y-1 hover:-rotate-1"
+    style={{ backgroundColor: MONTHLY.cream }}
+  >
+    {accent && <span className="block w-10 h-1.5 rounded-full mb-4" style={{ backgroundColor: accent }} />}
+    <h3 className="font-hand text-3xl mb-2" style={{ color: MONTHLY.ink }}>{title}</h3>
+    <p className="font-didact text-base leading-relaxed" style={{ color: MONTHLY.inkSoft }}>{children}</p>
+  </div>
+);
+
+MonthlyCard.propTypes = {
+  accent: PropTypes.string,
+  title: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
+};
+
+const MONTHLY_ART_FADE =
+  'linear-gradient(to right, transparent, #000 12%, #000 88%, transparent), ' +
+  'linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent)';
+
+// Tiled hexagon outline, same as the Month.ly header art
+const MONTHLY_HEX_BG = `url("data:image/svg+xml,${encodeURIComponent(
+  "<svg xmlns='http://www.w3.org/2000/svg' width='56' height='100'><path d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='#2E2238' stroke-opacity='.35' stroke-width='2'/><path d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='#2E2238' stroke-opacity='.25' stroke-width='2'/></svg>"
+)}")`;
+
+// The four cycle-coloured lines that wind through the artwork
+const MonthlyWavyLines = () => (
+  <svg
+    className="absolute inset-0 w-full h-full pointer-events-none"
+    viewBox="0 0 1000 4000"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    {[
+      { color: MONTHLY.green, d: 'M60 0 C 20 400, 200 700, 80 1100 S 20 1900, 140 2400 S 40 3300, 90 4000' },
+      { color: MONTHLY.pink, d: 'M960 200 C 880 700, 990 1000, 900 1500 S 980 2300, 880 2900 S 970 3600, 930 4000' },
+      { color: MONTHLY.blue, d: 'M0 900 C 120 1000, 30 1300, 20 1700 S 110 2600, 0 3100' },
+      { color: '#C2300E', d: 'M1000 2000 C 900 2300, 990 2700, 940 3100 S 870 3700, 1000 3900' }
+    ].map((line) => (
+      <path
+        key={line.color}
+        d={line.d}
+        fill="none"
+        stroke={line.color}
+        strokeWidth="6"
+        strokeLinecap="round"
+        strokeOpacity="0.55"
+        vectorEffect="non-scaling-stroke"
+      />
+    ))}
+  </svg>
+);
+
 // Month.ly Case Study Page
 const MonthlyPage = ({ setActivePage }) => {
   const problemCards = [
@@ -1025,243 +1190,329 @@ const MonthlyPage = ({ setActivePage }) => {
     { src: 'images/monthly-sketch-3.jpg', rotate: 2, mt: 6 }
   ];
 
+  // The artwork already carries each screen's headline, so captions stay short
+  const features = [
+    {
+      src: 'images/monthly-meet-rookie.png',
+      alt: 'Meet Rookie: one character drawn for each phase, follicular, ovulation, luteal and menstruation',
+      title: 'Meet Rookie',
+      body: 'One companion with a look for every phase, so you can tell where you are at a glance.'
+    },
+    {
+      src: 'images/monthly-log-phase.png',
+      alt: 'Phase today screen showing the follicular Rookie after logging a period',
+      title: 'Phase today',
+      body: 'Log a period and Rookie changes to your estimated phase, with the cycle day and a tip for right now.'
+    },
+    {
+      src: 'images/monthly-crew-checkin.png',
+      alt: 'Crew check-in screen with mood options and card colours',
+      title: 'Crew check-in',
+      body: 'Pick a mood, add a short note and a card colour, and share it with the few people you trust.'
+    },
+    {
+      src: 'images/monthly-data-secure.png',
+      alt: 'Purple Rookie with arms crossed next to the line: your data is protected and secure',
+      title: 'Private by default',
+      body: 'Dates, flow and symptoms, nothing more. No ad SDKs, no data brokers. Only you and Rookie.'
+    }
+  ];
+
+  const facts = [
+    { term: 'Role', detail: 'Design, illustration and development' },
+    { term: 'Stack', detail: 'React Native · Spring Boot · Railway' },
+    { term: 'Status', detail: 'Live on the App Store' }
+  ];
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#8B7C9C' }}>
+    <div
+      className="min-h-screen relative overflow-hidden"
+      style={{ backgroundColor: MONTHLY.bg, backgroundImage: MONTHLY_HEX_BG, backgroundSize: '84px 150px' }}
+    >
+      <MonthlyWavyLines />
+
       <button
         onClick={() => setActivePage('work')}
-        className="fixed top-6 left-6 z-50 bg-[#2A2438] text-white px-4 py-2 rounded-full font-didact hover:bg-[#3a3350] transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-lg"
+        className="fixed top-6 left-6 z-50 px-5 py-2.5 rounded-full font-didact text-base flex items-center gap-2 shadow-lg transition-transform duration-300 hover:scale-105"
+        style={{ backgroundColor: MONTHLY.cream, color: MONTHLY.ink }}
       >
         <span>←</span> Back
       </button>
 
-      {/* Banner */}
-      <div className="w-full h-40 sm:h-52 md:h-64 overflow-hidden shadow-xl">
-        <img src="images/monthly-banner.png" alt="Rookie character sheet" className="w-full h-full object-cover" style={{ objectPosition: 'center 78%' }} />
-      </div>
-
-      <div className="max-w-4xl mx-auto px-6 py-20 md:py-24">
+      <div className="relative max-w-6xl mx-auto px-6">
         {/* Hero */}
-        <div className="mb-20">
-          <div className="flex items-center gap-4 mb-6">
-            <span className="text-3xl md:text-5xl font-bold font-didact italic" style={{ color: '#F7F1E8' }}>
-              Month.ly
-            </span>
-            <img src="images/monthly-logo.png" alt="Month.ly logo" className="h-16 md:h-24 w-auto" />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold font-didact leading-tight mb-6" style={{ color: '#F7F1E8' }}>
-            A period tracker that isn&apos;t a medical chart.
-          </h1>
-          <p className="font-didact leading-relaxed mb-8 max-w-xl" style={{ color: '#E4DCEE' }}>
-            Month.ly turns your cycle into five illustrated phases of one character, Rookie.
-            React Native on the front, Spring Boot on the back, and no data sold to anybody.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {['New project', 'Design + dev work', 'React Native · Spring Boot', 'Railway · Apple Connect'].map((tag) => (
-              <span
-                key={tag}
-                className="px-4 py-2 rounded-full font-didact text-sm"
-                style={{ backgroundColor: '#F7F1E8', color: '#2A2438' }}
+        <header className="grid lg:grid-cols-[1fr_1.15fr] gap-4 lg:gap-8 items-center pt-28 pb-16 md:pt-32 md:pb-24">
+          <div className="relative z-10 order-2 lg:order-1">
+            <MonthlyReveal>
+              <h1 className="font-hand text-5xl md:text-7xl leading-[1.05] text-white mb-6">
+                A period tracker that isn&apos;t a medical chart.
+              </h1>
+            </MonthlyReveal>
+            <MonthlyReveal delay={100}>
+              <p className="font-didact text-lg md:text-xl leading-relaxed max-w-xl mb-10" style={{ color: MONTHLY.body }}>
+                Month.ly turns your cycle into illustrated phases of one character, Rookie, so checking in feels
+                like visiting a friend. No data sold to anybody.
+              </p>
+            </MonthlyReveal>
+            <MonthlyReveal delay={200}>
+              <dl className="grid sm:grid-cols-3 gap-6 border-t pt-6 mb-10" style={{ borderColor: 'rgba(255,255,255,0.18)' }}>
+                {facts.map((fact) => (
+                  <div key={fact.term}>
+                    <dt className="font-didact text-sm uppercase tracking-[0.2em] mb-1" style={{ color: MONTHLY.muted }}>{fact.term}</dt>
+                    <dd className="font-didact text-base text-white">{fact.detail}</dd>
+                  </div>
+                ))}
+              </dl>
+            </MonthlyReveal>
+            <MonthlyReveal from="pop" delay={300}>
+              <a
+                href="https://apps.apple.com/us/app/month-ly-period-tracker/id6758260411"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-didact text-base transition-transform duration-300 hover:scale-105 hover:-rotate-2"
+                style={{ backgroundColor: MONTHLY.cream, color: MONTHLY.ink }}
               >
-                {tag}
-              </span>
+                View on the App Store <ExternalLink size={18} />
+              </a>
+            </MonthlyReveal>
+          </div>
+          {/* No frame: the art's hexagons and lines match the page, so its edges fade
+              out and the Rookies look like they're standing on the background itself */}
+          <MonthlyReveal from="pop" delay={150} className="order-1 lg:order-2 -mx-2 lg:mx-0 lg:-mr-12">
+            <img
+              src="images/monthly-header.jpg"
+              alt="Month.ly title art with four Rookies, one for each cycle phase"
+              className="w-full"
+              style={{
+                // Two soft fades (sides and top/bottom) multiplied together, so no edge stays hard
+                maskImage: MONTHLY_ART_FADE,
+                WebkitMaskImage: MONTHLY_ART_FADE,
+                maskComposite: 'intersect',
+                WebkitMaskComposite: 'source-in'
+              }}
+            />
+          </MonthlyReveal>
+        </header>
+
+        <MonthlySection
+          label="The app"
+          title="Meet Rookie, then log, check in and stay private"
+          intro="Rookie guides you through every phase, and the three main screens all lead with Rookie, not a chart."
+        >
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-6">
+            {features.map((feature, idx) => (
+              <MonthlyReveal key={feature.src} from="pop" tilt={idx % 2 ? 4 : -4} delay={idx * STAGGER_MS}>
+                <figure>
+                  <img
+                    src={feature.src}
+                    alt={feature.alt}
+                    className="w-full rounded-3xl shadow-2xl mb-6 transition-transform duration-300 hover:-translate-y-2 hover:rotate-1"
+                  />
+                  <figcaption>
+                    <h3 className="font-hand text-3xl text-white mb-2 flex items-center gap-3">
+                      <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: MONTHLY_ACCENTS[idx] }} />
+                      {feature.title}
+                    </h3>
+                    <p className="font-didact text-base leading-relaxed" style={{ color: MONTHLY.body }}>{feature.body}</p>
+                  </figcaption>
+                </figure>
+              </MonthlyReveal>
             ))}
           </div>
-        </div>
+        </MonthlySection>
 
-        {/* 01 The Problem */}
-        <div className="mb-20">
-          <p className="font-didact text-base md:text-lg font-bold tracking-wide uppercase mb-3" style={{ color: '#F3DCEA' }}>01 &middot; The Problem</p>
-          <h2 className="text-2xl md:text-3xl font-bold font-didact leading-snug mb-8" style={{ color: '#F7F1E8' }}>
-            Period tracking apps are clinical and they sell/share private data that does not feel safe.
-          </h2>
+        <MonthlySection
+          label="01 · The problem"
+          title="Period trackers feel clinical, and they share data that should stay private."
+        >
           <div className="grid md:grid-cols-3 gap-4">
-            {problemCards.map((card) => (
-              <div key={card.title} className="rounded-2xl p-6" style={{ backgroundColor: '#F7F1E8' }}>
-                <h3 className="font-bold font-didact mb-2" style={{ color: '#2A2438' }}>{card.title}</h3>
-                <p className="font-didact text-sm leading-relaxed" style={{ color: '#5C5468' }}>{card.body}</p>
-              </div>
+            {problemCards.map((card, idx) => (
+              <MonthlyReveal key={card.title} delay={idx * STAGGER_MS}>
+                <MonthlyCard title={card.title}>{card.body}</MonthlyCard>
+              </MonthlyReveal>
             ))}
           </div>
-        </div>
+        </MonthlySection>
 
-        {/* 02 Research */}
-        <div className="mb-20">
-          <p className="font-didact text-base md:text-lg font-bold tracking-wide uppercase mb-3" style={{ color: '#F3DCEA' }}>02 &middot; Research</p>
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>What I looked at</h2>
-          <div className="grid md:grid-cols-2 gap-4">
+        <MonthlySection label="02 · Research" title="What I looked at">
+          <ol className="grid md:grid-cols-2 gap-x-12">
             {researchItems.map((item, idx) => (
-              <div key={item.title} className="rounded-2xl p-6 flex gap-4" style={{ backgroundColor: '#F7F1E8' }}>
-                <div
-                  className="flex items-center justify-center rounded-full font-bold font-didact text-sm shrink-0 w-7 h-7"
-                  style={{ backgroundColor: '#EADDF3', color: '#6D5D82' }}
+              <li key={item.title}>
+                <MonthlyReveal
+                  from={idx % 2 ? 'right' : 'left'}
+                  delay={(idx % 2) * STAGGER_MS}
+                  className="flex gap-5 py-7 border-t h-full"
+                  style={{ borderColor: 'rgba(255,255,255,0.18)' }}
                 >
-                  {idx + 1}
-                </div>
-                <div>
-                  <h4 className="font-bold font-didact mb-1" style={{ color: '#2A2438' }}>{item.title}</h4>
-                  <p className="font-didact text-sm leading-relaxed" style={{ color: '#5C5468' }}>{item.body}</p>
-                </div>
-              </div>
+                  <span className="font-hand text-4xl leading-none" style={{ color: MONTHLY_ACCENTS[idx] }}>{idx + 1}</span>
+                  <div>
+                    <h3 className="font-hand text-3xl text-white mb-1">{item.title}</h3>
+                    <p className="font-didact text-base leading-relaxed" style={{ color: MONTHLY.body }}>{item.body}</p>
+                  </div>
+                </MonthlyReveal>
+              </li>
             ))}
-          </div>
-        </div>
+          </ol>
+        </MonthlySection>
 
-        {/* 03 Design Process */}
-        <div className="mb-20">
-          <p className="font-didact text-base md:text-lg font-bold tracking-wide uppercase mb-3" style={{ color: '#F3DCEA' }}>03 &middot; Design Process</p>
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-4" style={{ color: '#F7F1E8' }}>
-            From cream paper to a character you collect
-          </h2>
-          <p className="font-didact leading-relaxed mb-10 max-w-2xl" style={{ color: '#E4DCEE' }}>
-            The first direction was a warm cream journal: cream backgrounds, dusty plum headlines. It solved
-            &quot;not clinical&quot; but not &quot;come back tomorrow.&quot; The second pass gave every phase its own
-            hue and drew Rookie five times over — the app became something to check on, not just fill in.
-          </p>
+        <MonthlySection
+          label="03 · Design process"
+          title="From cream paper to a character you collect"
+          intro={<>The first direction was a warm cream journal with dusty plum headlines. It solved &quot;not clinical&quot; but not &quot;come back tomorrow.&quot; The second pass gave every phase its own hue and drew Rookie five times over, so the app became something to check on, not just fill in.</>}
+        >
           <div className="grid md:grid-cols-3 gap-8">
-            {processSteps.map((step) => (
-              <div key={step.label}>
-                <div className="h-1 w-10 rounded-full mb-3" style={{ backgroundColor: step.color }} />
-                <p className="font-bold font-didact mb-1" style={{ color: '#F7F1E8' }}>{step.label}</p>
-                <p className="font-didact text-sm" style={{ color: '#E4DCEE' }}>{step.caption}</p>
-              </div>
+            {processSteps.map((step, idx) => (
+              <MonthlyReveal key={step.label} delay={idx * STAGGER_MS * 2}>
+                <span className="block w-12 h-1.5 rounded-full mb-4" style={{ backgroundColor: step.color }} />
+                <h3 className="font-hand text-3xl text-white mb-1">{step.label}</h3>
+                <p className="font-didact text-base" style={{ color: MONTHLY.body }}>{step.caption}</p>
+              </MonthlyReveal>
             ))}
           </div>
-        </div>
+        </MonthlySection>
 
-        {/* Three taps to the answer */}
-        <div className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-10" style={{ color: '#F7F1E8' }}>
-            Three taps to the answer
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {phones.map((screen) => (
-              <div key={screen.title}>
-                <div className="rounded-[2rem] overflow-hidden mb-4 shadow-xl">
-                  <img src={screen.src} alt={screen.title} className="w-full h-auto" />
-                </div>
-                <p className="font-bold font-didact text-sm mb-1" style={{ color: '#F7F1E8' }}>{screen.title}</p>
-                <p className="font-didact text-xs leading-relaxed" style={{ color: '#E4DCEE' }}>{screen.body}</p>
-              </div>
+        <MonthlySection label="04 · Screens" title="Three taps to the answer">
+          <div className="grid md:grid-cols-3 gap-10 md:gap-8">
+            {phones.map((screen, idx) => (
+              <MonthlyReveal key={screen.title} from="pop" tilt={idx === 1 ? 0 : (idx === 0 ? -5 : 5)} delay={idx * STAGGER_MS}>
+                <figure>
+                  <img
+                    src={screen.src}
+                    alt={screen.title}
+                    className="w-full rounded-[2rem] shadow-2xl mb-6 transition-transform duration-300 hover:-translate-y-2"
+                  />
+                  <figcaption>
+                    <h3 className="font-hand text-3xl text-white mb-1">{screen.title}</h3>
+                    <p className="font-didact text-base leading-relaxed" style={{ color: MONTHLY.body }}>{screen.body}</p>
+                  </figcaption>
+                </figure>
+              </MonthlyReveal>
             ))}
           </div>
-        </div>
+        </MonthlySection>
 
-        {/* Rookie transforms by your energy */}
-        <div className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-4" style={{ color: '#F7F1E8' }}>
-            Rookie transforms by your energy
-          </h2>
-          <p className="font-didact leading-relaxed mb-8 max-w-2xl" style={{ color: '#E4DCEE' }}>
-            Each phase is a card: a colour, a PMS score, and a phase power written the way people actually talk
-            about it. Log a period and the card changes — the reward for tracking is finding out which Rookie you get.
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {phases.map((phase) => (
-              <div key={phase.name}>
-                <div className="rounded-xl overflow-hidden shadow-lg mb-2">
-                  <img src={phase.image} alt={phase.name} className="w-full h-auto" />
-                </div>
-                <p className="font-didact text-xs text-center" style={{ color: '#F7F1E8' }}>{phase.name}</p>
-              </div>
+        <MonthlySection
+          label="05 · Character"
+          title="Rookie transforms by your energy"
+          intro="Each phase is a card: a colour, a PMS score, and a phase power written the way people actually talk about it. Log a period and the card changes. The reward for tracking is finding out which Rookie you get."
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {phases.map((phase, idx) => (
+              // Dealt out like cards, each one tipped a different way
+              <MonthlyReveal key={phase.name} from="pop" tilt={[-8, 6, -4, 8, -6][idx]} delay={idx * STAGGER_MS}>
+                <figure>
+                  <img
+                    src={phase.image}
+                    alt={`${phase.name} Rookie card`}
+                    className="w-full rounded-xl shadow-lg mb-3 transition-transform duration-300 hover:-translate-y-2 hover:rotate-2 hover:scale-105"
+                  />
+                  <figcaption className="font-hand text-xl text-center text-white">{phase.name}</figcaption>
+                </figure>
+              </MonthlyReveal>
             ))}
           </div>
-        </div>
+        </MonthlySection>
 
-        {/* How it fits together */}
-        <div className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
-            How it fits together
-          </h2>
-          <div className="rounded-2xl p-6 md:p-8" style={{ backgroundColor: '#6D5D82' }}>
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              {[
-                { name: 'React Native', body: 'iOS app, screens, phase timeline, tap-to-reveal predictions.' },
-                { name: 'Spring Boot', body: 'REST controllers, auth, cycle-prediction service.' },
-                { name: 'Database', body: 'Users, period records, symptom logs, Rookie collection state.' }
-              ].map((box) => (
-                <div key={box.name} className="rounded-xl p-4" style={{ backgroundColor: '#F7F1E8' }}>
-                  <p className="font-bold font-didact text-sm mb-1" style={{ color: '#2A2438' }}>{box.name}</p>
-                  <p className="font-didact text-xs leading-relaxed" style={{ color: '#5C5468' }}>{box.body}</p>
-                </div>
-              ))}
+        <MonthlySection label="06 · Build" title="How it fits together">
+          <MonthlyReveal>
+            <div className="rounded-3xl p-6 md:p-10 mb-12" style={{ backgroundColor: MONTHLY.surface }}>
+              <div className="grid md:grid-cols-3 gap-4 mb-6">
+                {[
+                  { name: 'React Native', body: 'iOS app, screens, phase timeline, tap-to-reveal predictions.' },
+                  { name: 'Spring Boot', body: 'REST controllers, auth, cycle-prediction service.' },
+                  { name: 'Database', body: 'Users, period records, symptom logs, Rookie collection state.' }
+                ].map((box, idx) => (
+                  <MonthlyReveal key={box.name} from="pop" delay={200 + idx * STAGGER_MS}>
+                    <MonthlyCard title={box.name}>{box.body}</MonthlyCard>
+                  </MonthlyReveal>
+                ))}
+              </div>
+              <div className="grid md:grid-cols-2 gap-2 font-didact text-base text-center" style={{ color: MONTHLY.body }}>
+                <p><span className="text-white">Railway</span> hosts the Spring Boot service and the database</p>
+                <p><span className="text-white">Apple Connect</span> builds and reviews the React Native client</p>
+              </div>
             </div>
-            <div className="grid md:grid-cols-2 gap-4 text-center">
-              <p className="font-didact text-xs" style={{ color: '#E8DFF0' }}>
-                <span className="font-bold">Railway</span> — hosts the Spring Boot service and the database
-              </p>
-              <p className="font-didact text-xs" style={{ color: '#E8DFF0' }}>
-                <span className="font-bold">Apple Connect</span> — builds and reviews the React Native client
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* What I built it with */}
-        <div className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
-            What I built it with
-          </h2>
-          <div className="grid md:grid-cols-4 gap-4">
-            {techStack.map((tech) => (
-              <div key={tech.name} className="rounded-2xl p-5" style={{ backgroundColor: '#F7F1E8' }}>
-                <p className="font-bold font-didact text-sm mb-2" style={{ color: '#2A2438' }}>{tech.name}</p>
-                <p className="font-didact text-xs leading-relaxed" style={{ color: '#5C5468' }}>{tech.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Harder than expected */}
-        <div className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
-            Three things that were harder than expected
-          </h2>
-          <div className="space-y-3">
-            {challenges.map((item) => (
-              <div key={item.title} className="rounded-2xl p-5 md:flex md:items-baseline md:gap-6" style={{ backgroundColor: '#F7F1E8' }}>
-                <h3 className="font-bold font-didact text-sm mb-1 md:mb-0 md:w-1/4 shrink-0" style={{ color: '#2A2438' }}>{item.title}</h3>
-                <p className="font-didact text-sm leading-relaxed" style={{ color: '#5C5468' }}>{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Rookie Initial Sketches Playground */}
-        <div className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-4" style={{ color: '#F7F1E8' }}>
-            Rookie Initial Sketches Playground
-          </h2>
-          <p className="font-didact leading-relaxed mb-8 max-w-2xl" style={{ color: '#E4DCEE' }}>
-            My favorite part of this project was designing a mascot that felt friendly and playful, so users
-            could actually enjoy checking in on their cycle instead of dreading it.
-          </p>
-          <div className="columns-2 md:columns-3 gap-4">
-            {sketches.map((sketch) => (
-              <div
-                key={sketch.src}
-                className="mb-4 break-inside-avoid transition-transform duration-300 hover:rotate-0 hover:scale-105"
-                style={{ transform: `rotate(${sketch.rotate}deg)`, marginTop: sketch.mt }}
+          </MonthlyReveal>
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {techStack.map((tech, idx) => (
+              <MonthlyReveal
+                key={tech.name}
+                delay={idx * STAGGER_MS}
+                className="border-t-2 pt-5"
+                style={{ borderColor: MONTHLY_ACCENTS[idx] }}
               >
-                <img src={sketch.src} alt="Rookie sketch" className="w-full h-auto rounded-lg shadow-xl" />
-              </div>
+                <h3 className="font-hand text-3xl text-white mb-1">{tech.name}</h3>
+                <p className="font-didact text-base leading-relaxed" style={{ color: MONTHLY.body }}>{tech.body}</p>
+              </MonthlyReveal>
             ))}
           </div>
-        </div>
+        </MonthlySection>
 
-        {/* What I'd do next */}
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold font-didact mb-8" style={{ color: '#F7F1E8' }}>
-            What I&apos;d do next
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {nextSteps.map((step) => (
-              <div key={step.title} className="rounded-2xl p-6" style={{ backgroundColor: '#D9BFC7' }}>
-                <h3 className="font-bold font-didact text-sm mb-2" style={{ color: '#2A2438' }}>{step.title}</h3>
-                <p className="font-didact text-xs leading-relaxed" style={{ color: '#5C4F5C' }}>{step.body}</p>
-              </div>
+        <MonthlySection label="07 · Challenges" title="Three things that were harder than expected">
+          <div>
+            {challenges.map((item) => (
+              <MonthlyReveal
+                key={item.title}
+                from="left"
+                className="grid md:grid-cols-[1fr_2fr] gap-2 md:gap-12 py-7 border-t"
+                style={{ borderColor: 'rgba(255,255,255,0.18)' }}
+              >
+                <h3 className="font-hand text-3xl text-white">{item.title}</h3>
+                <p className="font-didact text-lg leading-relaxed" style={{ color: MONTHLY.body }}>{item.body}</p>
+              </MonthlyReveal>
             ))}
           </div>
-        </div>
+        </MonthlySection>
+
+        <MonthlySection
+          label="08 · Sketchbook"
+          title="Where Rookie started"
+          intro="My favourite part of this project was designing a mascot that felt friendly and playful, so people could actually enjoy checking in on their cycle instead of dreading it."
+        >
+          <div className="columns-2 md:columns-3 gap-4">
+            {sketches.map((sketch, idx) => (
+              // Like photos tossed onto a table: each lands from a wilder angle
+              <MonthlyReveal
+                key={sketch.src}
+                from="pop"
+                tilt={sketch.rotate * 4}
+                delay={(idx % 3) * STAGGER_MS}
+                className="mb-4 break-inside-avoid"
+                style={{ marginTop: sketch.mt }}
+              >
+                <div
+                  className="transition-transform duration-300 hover:rotate-0 hover:scale-105"
+                  style={{ transform: `rotate(${sketch.rotate}deg)` }}
+                >
+                  <img src={sketch.src} alt="Early Rookie sketch" className="w-full h-auto rounded-lg shadow-xl" />
+                </div>
+              </MonthlyReveal>
+            ))}
+          </div>
+        </MonthlySection>
+
+        <MonthlySection label="09 · Next" title="What I'd do next">
+          <div className="grid md:grid-cols-3 gap-4">
+            {nextSteps.map((step, idx) => (
+              <MonthlyReveal key={step.title} from="pop" delay={idx * STAGGER_MS}>
+                <MonthlyCard accent={MONTHLY_ACCENTS[idx]} title={step.title}>{step.body}</MonthlyCard>
+              </MonthlyReveal>
+            ))}
+          </div>
+        </MonthlySection>
+
+        <footer className="py-20 border-t" style={{ borderColor: 'rgba(255,255,255,0.18)' }}>
+          <MonthlyReveal from="pop" className="flex flex-col items-center gap-4">
+            <img src="images/monthly-logo.png" alt="Month.ly logo" className="h-16 w-auto transition-transform duration-500 hover:rotate-12" />
+            <p className="font-didact text-base tracking-[0.3em]" style={{ color: MONTHLY.muted }}>MONTH.LY</p>
+            <button
+              onClick={() => setActivePage('work')}
+              className="font-didact text-base underline underline-offset-4 mt-2 text-white hover:opacity-80"
+            >
+              Back to all work
+            </button>
+          </MonthlyReveal>
+        </footer>
       </div>
     </div>
   );
@@ -2331,18 +2582,37 @@ const GridGallery = ({ forceAnimate }) => {
   const [visibleItems, setVisibleItems] = useState({});
   const [hoveredId, setHoveredId] = useState(null);
   const [zoomedImage, setZoomedImage] = useState(null);
-  
+  const itemRefs = useRef({});
+
+  // Masonry fills column by column, so DOM order isn't visual order. Measure where
+  // each tile actually sits and reveal them in bands from the top of the page down.
   const startAnimation = () => {
-    artPieces.forEach((piece, index) => {
+    const measured = artPieces
+      .map((piece) => {
+        const el = itemRefs.current[piece.id];
+        return { id: piece.id, top: el ? el.offsetTop : 0 };
+      })
+      .sort((a, b) => a.top - b.top);
+
+    const ROW_TOLERANCE = 120; // tiles within this many px count as the same row
+    const STEP = 160;
+    let row = 0;
+    let rowTop = measured.length ? measured[0].top : 0;
+
+    measured.forEach(({ id, top }) => {
+      if (top - rowTop > ROW_TOLERANCE) {
+        row += 1;
+        rowTop = top;
+      }
       setTimeout(() => {
         setVisibleItems(prev => ({
           ...prev,
-          [piece.id]: true
+          [id]: true
         }));
-      }, index * 150);
+      }, row * STEP);
     });
   };
-  
+
   useEffect(() => {
     if (forceAnimate) {
       startAnimation();
@@ -2488,8 +2758,8 @@ const GridGallery = ({ forceAnimate }) => {
 
   return (
     <>
-      <div 
-        id="SecondGallery" 
+      <div
+        id="SecondGallery"
         className="w-full min-h-screen content-layer bg-gradient-to-b from-[#1B1B1B] to-[#2D2D2D] py-16"
       >
         <div className="max-w-7xl mx-auto px-6">
@@ -2501,19 +2771,19 @@ const GridGallery = ({ forceAnimate }) => {
             <div className="w-24 h-1 bg-[#8169B1] mx-auto rounded-full"></div>
           </div>
 
-          {/* Masonry Grid Layout */}
-          <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-            {artPieces.map((piece, index) => (
+          {/* Masonry layout - columns align, gutters stay equal, images keep their own size */}
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
+            {artPieces.map((piece) => (
               <div
                 key={piece.id}
+                ref={(el) => { itemRefs.current[piece.id] = el; }}
                 className={`break-inside-avoid mb-6 transition-all duration-700 ease-out transform
                   ${visibleItems[piece.id] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
                   hover:z-10`}
                 onMouseEnter={() => setHoveredId(piece.id)}
                 onMouseLeave={() => setHoveredId(null)}
-                style={{ transitionDelay: `${index * 150}ms` }}
               >
-                <div 
+                <div
                   className={`relative transform transition-all duration-500 group cursor-pointer
                     ${hoveredId === piece.id ? 'scale-105' : 'scale-100'}`}
                   onClick={() => handleImageClick(piece)}
@@ -2521,10 +2791,10 @@ const GridGallery = ({ forceAnimate }) => {
                   <img
                     src={piece.source}
                     alt={piece.title}
-                    className={`w-full h-auto object-cover transition-all duration-500 rounded-lg shadow-xl
+                    className={`block w-full h-auto transition-all duration-500 rounded-lg shadow-xl
                       ${hoveredId === piece.id ? 'brightness-110 contrast-110' : 'brightness-95'}`}
                   />
-                  
+
                   {/* Subtle overlay on hover */}
                   <div className={`absolute inset-0 bg-black/10 rounded-lg transition-opacity duration-300
                     ${hoveredId === piece.id ? 'opacity-100' : 'opacity-0'}`}/>

@@ -9,7 +9,8 @@ export default {
       fontFamily: {
         'didact': ['"Didact Gothic"', 'sans-serif'],
         'inter': ['Inter', 'sans-serif'],
-        'montserrat': ['Montserrat', 'sans-serif']
+        'montserrat': ['Montserrat', 'sans-serif'],
+        'hand': ['"Patrick Hand"', 'cursive']
       },
     },
   },
